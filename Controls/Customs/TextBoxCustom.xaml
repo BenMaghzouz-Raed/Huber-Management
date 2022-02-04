@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="Huber_Management.Controls.TextBoxCustom"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Huber_Management.Controls"
+             mc:Ignorable="d" d:Width="300" d:Height="50">
+
+    <UserControl.Resources>
+        <!--#region Title Text Box Style-->
+        <Style x:Key="textBoxTitleStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#a3a3a4"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="2,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Text, ElementName=Input}" Value="">
+                    <!-- Default Position and Font size-->
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard SpeedRatio="10">
+                                <DoubleAnimation Storyboard.TargetProperty="FontSize" To="14"/>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+
+                    <!-- New Position and Font size When Input has Text-->
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard SpeedRatio="10">
+                                <DoubleAnimation Storyboard.TargetProperty="FontSize" To="11"/>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0 0 0 25"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!--#endregion-->
+        
+        <!--#region Input TextBlock Style -->
+        <Style x:Key="textBoxInputStyle" TargetType="TextBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="2,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding FontSize, ElementName=Title}" Value="11">
+                    <!-- New Position When The FontSize of Title == 12 -->
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard SpeedRatio="10">
+                                <DoubleAnimation Storyboard.TargetProperty="FontSize" To="14"/>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0 8 0 0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+
+                    <!-- Default -->
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard SpeedRatio="10">
+                                <DoubleAnimation Storyboard.TargetProperty="FontSize" To="14"/>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!--#endregion-->
+    </UserControl.Resources>
+
+    <Border Background="White" CornerRadius="4" HorizontalAlignment="Stretch" 
+            Height="45" VerticalAlignment="Center" BorderBrush="#CC91A6B1" BorderThickness="2">
+
+    <Grid Margin="10,4">
+            <!-- Title -->
+            <TextBlock x:Name="Title"
+                       Style="{StaticResource textBoxTitleStyle}"/>
+
+            <!-- TextBox-->
+            <TextBox x:Name="Input"
+                     Style="{StaticResource textBoxInputStyle}"/>
+            
+        </Grid>
+    </Border>
+</UserControl>

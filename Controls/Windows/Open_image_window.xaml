@@ -1,0 +1,14 @@
+﻿<Window x:Class="Huber_Management.Controls.Open_image_window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Huber_Management.Controls"
+        mc:Ignorable="d"
+        Title="Image" Height="400" Width="400"
+        Topmost="True"
+        Icon="{StaticResource addImage}">
+    <Grid>
+        <Image x:Name="image_window_source" Source="/Assets/icons8-no-image-100.png" Stretch="Uniform" />
+    </Grid>
+</Window>

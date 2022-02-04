@@ -1,0 +1,126 @@
+﻿<Page x:Class="Huber_Management.Pages.Reception_page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Huber_Management.Pages"
+      xmlns:controls="clr-namespace:Huber_Management.Controls"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      mc:Ignorable="d" Loaded="Load"
+      d:DesignHeight="640" d:DesignWidth="900"
+      Title="Reception_page">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="57"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--#region BUTTONS AND FILTERS -->
+        <Grid Margin="0,0,0,3" Background="White">
+            <!-- SEARCH AND FILTERS-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <!--SEARCH BAR-->
+
+            <TextBox x:Name="Nav_search_box" HorizontalAlignment="Stretch" materialDesign:HintAssist.Hint="Search by id ..." TextWrapping="NoWrap"
+                         VerticalAlignment="Center" Margin="10,0" Height="36" FontSize="16" MinWidth="150" materialDesign:TextFieldAssist.HasClearButton="True"
+                         BorderThickness="0" FontFamily="Segoe UI" TextAlignment="Left" Foreground="{StaticResource Label-Gray-Color}" TextChanged="InitializeAllData_Filters"
+                         Background="{StaticResource Screen-bg-Color}" Padding="10 5" VerticalContentAlignment="Center" materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                         HorizontalContentAlignment="Stretch"  materialDesign:TextFieldAssist.LeadingIcon="Search" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource Dark-main-Blue-Color}"/>
+
+            <!-- Filters -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                <!-- FILTER -->
+                <Label Content="Filter:" FontSize="16" FontWeight="DemiBold" Foreground="{StaticResource Label-Gray-Color}" Margin="0 0 5 0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="filter_combobox" Style="{StaticResource MaterialDesignComboBox}" Background="{StaticResource Screen-bg-Color}"
+                    materialDesign:ColorZoneAssist.Mode="PrimaryDark" MinWidth="110" Height="35" Padding="10 0"
+                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+
+                    <ComboBoxItem Content="All Tools" IsSelected="True"/>
+                    <ComboBoxItem Content="Faulty Tools"/>
+                    <ComboBoxItem Content="Out of Stock"/>
+                    <ComboBoxItem Content="Inused"/>
+                </ComboBox>
+
+                <!-- REFRESH -->
+                <Border Width="22" Height="22" MouseDown="Viewbox_MouseDown" Cursor="Hand" Margin="15,0,0,0" ToolTip="Reload the page">
+                    <Canvas Width="24" Height="24">
+                        <Path Fill="{StaticResource Label-Gray-Color}" Data="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M18 11H13L14.81 9.19A3.94 3.94 0 0 0 12 8A4 4 0 1 0 15.86 13H17.91A6 6 0 1 1 12 6A5.91 5.91 0 0 1 16.22 7.78L18 6Z" />
+                    </Canvas>
+                </Border>
+            </StackPanel>
+
+            <!-- Add New Tool-->
+            <Button x:Name="Add_reception_tool" Grid.Column="2" Padding="15 0" Margin="0,0,18,0" ToolTip="Add a Reception" materialDesign:ButtonAssist.CornerRadius="0"
+                    HorizontalAlignment="Right" Background="{StaticResource Success-green-Color}" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                    BorderBrush="{StaticResource Success-green-Color}" Click="Add_reception_tool_Click" Height="36"> 
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Canvas Width="24" Height="24" Grid.Column="0">
+                        <Path Fill="White" Data="M1 12H10.8L8.3 9.5L9.7 8.1L14.6 13L9.7 17.9L8.3 16.5L10.8 14H1V12M21 2H3C1.9 2 1 2.9 1 4V10.1H3V6H21V20H3V16H1V20C1 21.1 1.9 22 3 22H21C22.1 22 23 21.1 23 20V4C23 2.9 22.1 2 21 2" />
+                    </Canvas>
+                    <TextBlock Text="NEW" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White"/>
+                </Grid>
+            </Button>
+
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region TABLE DATA-->
+        <Grid Grid.Row="1" Margin="10,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- Table Header-->
+            <Border Style="{StaticResource Table-Header-style}" Background="{StaticResource Success-green-Color}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <controls:TableHeader_RadioBtn x:Name="date" Grid.Column="0" Tag="Date" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <Label Grid.Column="1" Content="#" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="serial_id" Grid.Column="2" Tag="Serial NB" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <Label Grid.Column="3" Content="Designation" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="quantity" Grid.Column="4" Tag="Quantity" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="supplier" Grid.Column="5" Tag="Supplier" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="price" Grid.Column="6" Tag="Price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="total_price" Grid.Column="7" Tag="Total price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white" />
+                    <Label Grid.Column="8" Content="By" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+
+                </Grid>
+            </Border>
+
+            <!-- Table Rows-->
+            <ScrollViewer  x:Name="DataScrollViewer" VerticalScrollBarVisibility="Visible" Grid.Row="1" Visibility="Collapsed">
+                <StackPanel x:Name="Reception_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" />
+            </ScrollViewer>
+            
+            <!-- Loading Icon -->
+            <ScrollViewer x:Name="LoadingIcon" VerticalScrollBarVisibility="Visible" Grid.Row="1" Visibility="Visible">
+                <TextBlock Text="Loading ..." HorizontalAlignment="Center" Margin="30" FontSize="24" FontWeight="DemiBold"/>
+            </ScrollViewer>
+        </Grid>
+        <!--#endregion-->
+
+
+    </Grid>
+</Page>

@@ -1,0 +1,101 @@
+﻿<Application x:Class="Huber_Management.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Huber_Management"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+            StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                
+                <ResourceDictionary Source="Assets/Styles.xaml"/>
+                <ResourceDictionary Source="Assets/Icons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--PRIMARY-->
+            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="Transparent"/>
+            <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#778080"/>
+
+            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#005596"/>
+            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#FFFFFF"/>
+            
+            <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#005596"/>
+            <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="#FFFFFF"/>
+            
+            <!-- Screen bg Color-->
+            <SolidColorBrush x:Key="Screen-bg-Color"  Color="#FFF8F8F9"/>
+
+            <!-- SideBar Text Color--> 
+            <SolidColorBrush x:Key="Grey-Blue-Color"  Color="#91A6B1"/>
+
+            <!-- Hover Soft Blue Color-->
+            <SolidColorBrush x:Key="Soft-bg-Blue-Color"  Color="#DFEDF7"/>
+
+            <!-- Dark Main Blue Color-->
+            <SolidColorBrush x:Key="Dark-main-Blue-Color"  Color="#005596"/>
+
+            <!-- Success Green Color-->
+            <SolidColorBrush x:Key="Success-green-Color"  Color="#3EAE4D"/>
+
+            <!-- Soft Green Color-->
+            <SolidColorBrush x:Key="Soft-green-Color"  Color="#E6F6E9"/>
+
+            <!-- Failed Red Color-->
+            <SolidColorBrush x:Key="Failed-red-Color"  Color="#A20000"/>
+
+            <!-- Soft Red Color-->
+            <SolidColorBrush x:Key="Soft-red-Color"  Color="#F9E5EA"/>
+
+            <!-- orange Color-->
+            <SolidColorBrush x:Key="Orange-Color"  Color="#FFA427"/>
+
+            <!-- Soft orange Color-->
+            <SolidColorBrush x:Key="Soft-orange-Color"  Color="#FBEDD9"/>
+
+            <!-- Table Header bg Color-->
+            <SolidColorBrush x:Key="Table-Header-bg-Color"  Color="#E5E5E5"/>
+
+            <!-- Text Black Color-->
+            <SolidColorBrush x:Key="Text-Black-Color"  Color="#151515"/>
+
+            <!-- Label Gray Color-->
+            <SolidColorBrush x:Key="Label-Gray-Color"  Color="#778080"/>
+
+            <Style x:Key="Add-btn" TargetType="Button">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="DemiBold"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}" >
+                            <Border  x:Name="Border" Background="{TemplateBinding Background}" BorderThickness="0" 
+                                 VerticalAlignment="Center" Padding="10,6" IsEnabled="False" CornerRadius="6,6,6,6"
+                                 >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Button Icon-->
+                                    <Image Source="{TemplateBinding Tag}" Width="24" Height="24" Margin="0,0,8,0"/>
+
+                                    <!-- Button Text-->
+                                    <ContentPresenter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Content="{TemplateBinding Content}"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseCaptured" Value='True'>
+                                    <Setter Property="Opacity" Value=".7" TargetName="Border"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

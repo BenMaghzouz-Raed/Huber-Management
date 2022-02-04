@@ -1,0 +1,122 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <!-- Start: Table Header -->
+    <Style x:Key="Table-Header-style" TargetType="Border">
+        <Setter Property="CornerRadius" Value="8,8,0,0"/>
+        <Setter Property="Margin" Value="0,0,18,6"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <!-- Start: Table Header -->
+
+    <Style x:Key="Table-Header-label" TargetType="Label">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+    </Style>
+
+    <Style x:Key="Table-Header-textBlock" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="TextTrimming" Value="WordEllipsis"/>
+    </Style>
+
+    <Style x:Key="logoMenuStyle" TargetType="ToggleButton">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="White" BorderThickness="0,3,3,3" BorderBrush="#FFF8F8F9" MaxWidth="220" Cursor="Hand">
+                        <Image Name="toggleMenuImage" Source="{DynamicResource Huber_large_icon}" Margin="10,5,10,5" Stretch="Uniform" 
+                               StretchDirection="Both" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Source" Value="{DynamicResource Huber_small_icon }" TargetName="toggleMenuImage"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter Property="Source" Value="{DynamicResource Huber_large_icon }" TargetName="toggleMenuImage"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- MAINWINDOW SIDEBAR NAVIGATION BUTTONS-->
+    <Style x:Key="sidebarCheckbox" TargetType="RadioButton">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid Background="White" Name="grid_btn" Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition x:Name="icon_column" Width="60"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border x:Name="Left_line" Visibility="Collapsed" Width="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                        <!--<Image Source="{TemplateBinding ImageSource}" Width="24" Height="24"/>-->
+                        <Canvas Width="28" Height="28"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Path x:Name="icon_btn" Fill="{TemplateBinding Foreground}" Data="{TemplateBinding Tag}"/>
+                        </Canvas>
+                        <TextBlock Name="text_block" Grid.Column="2" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F6F9FF" TargetName="grid_btn"/>
+                            <Setter Property="Foreground" Value="#005596" TargetName="text_block"/>
+                            <Setter Property="Fill" Value="#005596" TargetName="icon_btn"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Background" Value="#F6F9FF" TargetName="grid_btn"/>
+                            <Setter Property="Foreground" Value="#005596" TargetName="text_block"/>
+                            <Setter Property="Fill" Value="#005596" TargetName="icon_btn"/>
+                            <Setter Property="Visibility" Value="Visible" TargetName="Left_line"/>
+                            <Setter Property="Background" Value="#005596" TargetName="Left_line"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- TEXTBOX MATERIAL DSIGN STYLE for add new tool, add reception ... -->
+    <Style x:Key="textBoxInputStyle" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}" TargetType="{x:Type TextBox}">
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="2"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="16"/>
+    </Style>
+
+    <!-- COMBOBOX MATERIAL DSIGN STYLE for add new tool, add reception ... -->
+    <Style x:Key="comboBoxInputStyle" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}" TargetType="{x:Type ComboBox}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="2"/>
+        <Setter Property="materialDesign:ColorZoneAssist.Mode" Value="PrimaryDark"/>
+    </Style>
+
+
+    <!-- SINGLE_TOOL_WINDOW NAVIGATION BUTTONS-->
+    
+</ResourceDictionary>

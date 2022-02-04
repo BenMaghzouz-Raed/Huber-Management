@@ -1,0 +1,47 @@
+﻿<Page x:Class="Huber_Management.Controls.Single_tool_history_page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Huber_Management.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Single_tool_history_page">
+
+    <Grid Margin="0 5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Table Header-->
+        <Border Style="{StaticResource Table-Header-style}" Margin="0,0,0,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Date" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                <TextBlock Grid.Column="1" Text="Time" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                <TextBlock Grid.Column="2" Text="Transaction" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                <TextBlock Grid.Column="3" Text="Quantity" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                <TextBlock Grid.Column="4" Text="Requester" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                <TextBlock Grid.Column="5" Text="By" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                <TextBlock Grid.Column="6" Text="Comment"  Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+            </Grid>
+        </Border>
+
+        <!-- Table Rows-->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <StackPanel x:Name="Transactions_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" MinHeight="40">
+                <Label Content="The is no history for this tool" Foreground="{StaticResource Label-Gray-Color}"
+                       HorizontalAlignment="Center" Margin="0 10 0 0" FontSize="18"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

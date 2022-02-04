@@ -1,0 +1,170 @@
+﻿<Window x:Class="Huber_Management.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Huber_Management"
+        xmlns:control="clr-namespace:Huber_Management.Controls"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="Managment APP" Height="700" Width="1300" ResizeMode="CanResize" 
+        WindowStartupLocation="CenterScreen" WindowState="Normal" 
+        MinWidth="1000" MinHeight="700" 
+        Background="{StaticResource Screen-bg-Color}" 
+        Icon="{StaticResource Huber_small_icon}">
+
+    <Window.Resources>
+        <!--#region SIDEBAR BUTTONS STYLE -->
+        <Style x:Key="side_bar_button" TargetType="RadioButton">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource Grey-Blue-Color}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}" >
+                        <Border x:Name="Border" Background="{TemplateBinding Background}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="55"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Button Icon-->
+                                <Image Source="{TemplateBinding Tag}" Width="24" Height="24"/>
+
+                                <!-- Button Text-->
+                                <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Text="{TemplateBinding Content}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" 
+                                        />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Soft-bg-Blue-Color}" TargetName="Border" />
+                                <Setter Property="Foreground" Value="{StaticResource Dark-main-Blue-Color}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Soft-bg-Blue-Color}" TargetName="Border" />
+                                <Setter Property="Foreground" Value="{StaticResource Dark-main-Blue-Color}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--#endregion-->
+        
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" x:Name="gridMenu">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- TOP LEFT LOGO -->
+            <!--<Border Background="White" BorderThickness="0,3,3,3" BorderBrush="#FFF8F8F9" Grid.Row="0">
+                <Image Source="{StaticResource Huber_large_icon}" Margin="10,5,10,5" Stretch="Uniform" StretchDirection="Both" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>-->
+            <ToggleButton x:Name="logo_menu" Style="{DynamicResource logoMenuStyle}">
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="hidePanel">
+                                <DoubleAnimation Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="Width" BeginTime="0:0:0" From="60" To="220" Duration="0:0:0.3" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="showPanel">
+                                <DoubleAnimation Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="Width" BeginTime="0:0:0" From="220" To="60" Duration="0:0:0.3" />
+
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton> 
+            <!-- LEFT SIDEBAR-->
+            <Border Background="White" BorderThickness="0,0,3,3" BorderBrush="#FFF8F8F9" 
+                    VerticalAlignment="Stretch" Grid.Row="1">
+                <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <!-- Fisrt Section -->
+                    <Border Background="White" BorderThickness="0,0,0,3" BorderBrush="#FFF8F8F9" DockPanel.Dock="Top">
+                        <StackPanel Margin="0,20,0,20" Orientation="Vertical" >
+                            <!-- Dashboard -->
+                            <RadioButton Content="Dashboard" Style="{DynamicResource sidebarCheckbox}" Uid="/Pages/Dashboard_page.xaml" Foreground="{StaticResource Grey-Blue-Color}" 
+                                    Checked="SideBar_checkbox_Click" GroupName="Pages_nav" IsChecked="True" Tag="{DynamicResource Dashboard}"/>
+                            <!-- All Tools -->
+                            <RadioButton Content="All Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/All_tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource All_Tools}"/>
+                            <!-- Reception -->
+                            <RadioButton Content="Reception" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Reception_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Reception}"/>
+                            <!-- Output -->
+                            <RadioButton Content="Output" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Output_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Output}"/>
+                            <!-- Repaired Tools -->
+                            <RadioButton Content="Repaired Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Repaired_Tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Repaired_tools}"/>
+                            <!-- Faulty Tools -->
+                            <RadioButton Content="Faulty Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Faulty_Tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Faulty_tools_Tools}"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- Second Section -->
+                    <Border Background="White" BorderThickness="0,0,0,3" BorderBrush="#FFF8F8F9" DockPanel.Dock="Top">
+                        <StackPanel Margin="0,20,0,20" Orientation="Vertical" DockPanel.Dock="Top">
+                            <!-- Purchase Order -->
+                            <RadioButton Content="Purchase Order" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Purchase_order_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Purchase_order}"/>
+                            <!-- Maintenance Plan -->
+                            <RadioButton Content="Maintenance Plan" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Maintenance_plan_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Maintenance_plan}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Third Section -->
+                    <Border Background="White" BorderThickness="0,0,0,3" BorderBrush="#FFF8F8F9" DockPanel.Dock="Top">
+                        <StackPanel Margin="0,20,0,20" Orientation="Vertical" DockPanel.Dock="Top">
+                            <!-- History -->
+                            <RadioButton Content="History" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/History_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource History}"/>
+                            <!-- Settings -->
+                            <RadioButton Content="Settings" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Settings_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Settings}"/>
+                        </StackPanel>
+                    </Border>
+                    <RadioButton x:Name="Logout_btn" Style="{DynamicResource sidebarCheckbox}" Content="Log Out" Tag="{DynamicResource Logout}" 
+                                 DockPanel.Dock="Bottom" Height="40" VerticalAlignment="Bottom" Checked="Logout_btn_Checked" Foreground="{StaticResource Failed-red-Color}"/>
+                </DockPanel>  
+            </Border>
+            
+        </Grid>
+        
+        <!-- MAIN CONTENT -->
+        <Border Grid.Column="1" BorderThickness="0 3 3 3" BorderBrush="{StaticResource Screen-bg-Color}"  >
+            <!--#region CONTENT -->
+            <Frame x:Name="Main_container" Source="/Pages/All_tools_page.xaml" NavigationUIVisibility="Hidden"/>
+
+            <!--#endregion-->
+        </Border>
+
+    </Grid>
+</Window>

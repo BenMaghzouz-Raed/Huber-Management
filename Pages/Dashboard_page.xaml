@@ -1,0 +1,170 @@
+﻿<Page x:Class="Huber_Management.Pages.Dashboard_page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:local="clr-namespace:Huber_Management.Pages"
+      xmlns:controls="clr-namespace:Huber_Management.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Dashboard_page">
+
+    <Grid Margin="10 0 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <!-- NUMBERS -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Background="{StaticResource Soft-bg-Blue-Color}" Margin="0 5 5 5" CornerRadius="8" Padding="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Total Tools" FontSize="16" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="SemiBold" Foreground="{StaticResource Dark-main-Blue-Color}"/>
+                            <Label x:Name="total_tools" Content="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   FontSize="36" FontWeight="Bold"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Background="{StaticResource Soft-orange-Color}" Margin="5" CornerRadius="8" Padding="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Stock Current Value" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="SemiBold" Foreground="{StaticResource Orange-Color}"/>
+                            <TextBlock x:Name="total_price" Text="0 €" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   FontSize="32" FontWeight="Bold" TextTrimming="CharacterEllipsis" Opacity=".8"/>
+                        </Grid>
+                    </Border>
+                    <!--<Border Grid.Column="2" Background="{StaticResource Soft-red-Color}" Margin="5" CornerRadius="8" Padding="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Faulty Tool" FontSize="16" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{StaticResource Failed-red-Color}"/>
+                            <Label x:Name="total_faulty" Content="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   FontSize="36" FontWeight="Bold"/>
+                        </Grid>
+                    </Border>-->
+                    <Border Grid.Column="3" Background="{StaticResource Soft-green-Color}" Margin="5 5 0 5" CornerRadius="8" Padding="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Earnings" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource Success-green-Color}"/>
+                            <Label x:Name="total_gain" Content="0 €" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   FontSize="32" FontWeight="Bold" Foreground="{StaticResource Success-green-Color}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- CHART -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <controls:MaterialCards x:Name="InputChart" Margin="0 5"/>
+
+                    <!--<controls:MaterialCards x:Name="OutputChart" Grid.Column="1" Margin=" 5 5 0 5"/>-->
+                </Grid>
+            </Grid>
+
+            <Border Grid.Column="1" Padding="5" Background="White" CornerRadius="10" Margin="10 5 0 5">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Today Tasks :" HorizontalAlignment="Left"
+                       FontWeight="DemiBold" FontSize="18"/>
+                    <!-- Table Rows-->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="Today_tasks_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" VerticalAlignment="Stretch">
+                            <Label Content="We Can't find any tasks for today" Foreground="{StaticResource Label-Gray-Color}" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- TABLES -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!-- Out of stock -->
+            <Border Padding="5" Background="White" CornerRadius="10" Margin="0 5 5 5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Label Content="Out of stock :" HorizontalAlignment="Left" Grid.Row="0"
+                       FontWeight="DemiBold" FontSize="18" Margin="0 0 0 10"/>
+                    <!-- Table Rows-->
+                    <Border x:Name="Out_of_stock_Header" Style="{StaticResource Table-Header-style}"  Grid.Row="1"
+                            Margin="0 0 0 6" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="120"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Serial NB" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                            <TextBlock Grid.Column="1" Text="Actual stock" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                            <TextBlock Grid.Column="2" Text="Needed quantity" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                            <TextBlock Grid.Column="3" Text="Total (N.Q)" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                            <TextBlock Grid.Column="4" Text="Supplier" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2">
+                        <StackPanel x:Name="Out_of_stock_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" VerticalAlignment="Stretch">
+                            <Label Content="All the tools are available" Foreground="{StaticResource Label-Gray-Color}" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Latest History -->
+            <Border Padding="5" Background="White" CornerRadius="10" Margin="5 5 0 5" Grid.Column="1">
+                <StackPanel Orientation="Vertical" Grid.Column="0">
+                    <Label Content="Latest transactions :" HorizontalAlignment="Left"
+                       FontWeight="DemiBold" FontSize="18" Margin="0 0 0 10"/>
+                    <!-- Table Rows-->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="latest_history_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" VerticalAlignment="Stretch">
+                            <Label Content="We can't find any history !" Foreground="{StaticResource Label-Gray-Color}" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

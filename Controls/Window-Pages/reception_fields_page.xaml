@@ -1,0 +1,101 @@
+﻿<Page x:Class="Huber_Management.Controls.reception_fields_page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+      xmlns:local="clr-namespace:Huber_Management.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="reception_fields_page">
+    <Page.Resources>
+        <Style x:Key="MaterialDesign_textBox_style" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}" TargetType="TextBox">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </Page.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- SELECTED TOOL DETAILS -->
+        <Grid Margin="0 0 0 30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <!-- IMAGE -->
+            <Border Grid.Column="0" BorderThickness="0 0 2 0" Padding="0 0 10 0"
+                    BorderBrush="{StaticResource Table-Header-bg-Color}">
+                <Image x:Name="image_detail" Source="{StaticResource noImage}" Stretch="Uniform" />
+            </Border>
+            <!-- DETAILS -->
+            <Grid  Grid.Column="1"  Margin="10,0,5,0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock x:Name="serial_nb_detail" Grid.Row="0" Text="SERIAL ID"
+                               FontSize="28" FontWeight="DemiBold" VerticalAlignment="Center"/>
+
+                <TextBlock x:Name="project_detail" Grid.Row="1" Text="no project"
+                               FontSize="14" VerticalAlignment="Center"/>
+
+                <TextBlock x:Name="designation_detail" Grid.Row="2" Grid.RowSpan="2" Text="no designation"
+                               FontSize="12" FontWeight="Light" Foreground="{StaticResource Label-Gray-Color}"
+                               TextWrapping="WrapWithOverflow"/>
+            </Grid>
+        </Grid>
+        
+        <!-- INPUTS -->
+        <Grid Grid.Row="1" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <!-- Quantity -->
+                <TextBox x:Name="quantity_add"  Margin="0 0 5 5" Style="{DynamicResource MaterialDesign_textBox_style}" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                     materialDesign:HintAssist.Hint="Quantity" VerticalContentAlignment="Center" Padding="12"/>
+
+                <!-- Supplier code -->
+                <TextBox  x:Name="supplier_code_add" Grid.Column="1" Margin="5 0 0 5" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12" 
+                          VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Supplier Code"  BorderBrush="{DynamicResource MaterialDesignDivider}"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <!-- Price -->
+                <TextBox x:Name="price_add" Margin="0 5 5 5" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12" 
+                     materialDesign:HintAssist.Hint="Price en €" VerticalContentAlignment="Center"  BorderBrush="{DynamicResource MaterialDesignDivider}"
+                    />
+                <!-- Date -->
+                <TextBox x:Name="date_add" Margin="5 5 0 5" Grid.Column="1" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12" materialDesign:TextFieldAssist.LeadingIcon="Calendar"
+                     materialDesign:HintAssist.Hint="Date" materialDesign:TextFieldAssist.HasLeadingIcon="True" VerticalContentAlignment="Center"  BorderBrush="{DynamicResource MaterialDesignDivider}"
+                         />
+            </Grid>
+
+            <!-- Comment -->
+            <TextBox x:Name="comment_add" Margin="0 5 0 0" Grid.Row="2" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12"
+                     materialDesign:HintAssist.Hint="Comment"  materialDesign:TextFieldAssist.HasTrailingIcon="True" VerticalContentAlignment="Center" 
+                     materialDesign:TextFieldAssist.TrailingIcon="Comment" TextWrapping="Wrap"  BorderBrush="{DynamicResource MaterialDesignDivider}"/>
+        </Grid>
+        
+    </Grid>
+</Page>

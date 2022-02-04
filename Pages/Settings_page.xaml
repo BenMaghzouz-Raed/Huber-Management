@@ -1,0 +1,127 @@
+﻿<Page x:Class="Huber_Management.Pages.Settings_page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Huber_Management.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Settings_page">
+    <Page.Resources>
+        <!--#region IMPORT and EXPORT BUTTON STYLE-->
+        <Style x:Key="Import_btn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}" >
+                        <Border  x:Name="Border" Background="{TemplateBinding Background}" BorderThickness="2" BorderBrush="{TemplateBinding BorderBrush}" 
+                                 VerticalAlignment="Center" HorizontalAlignment="Center" Padding="10,6" IsEnabled="False" CornerRadius="6,6,6,6"
+                                 >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Button Icon-->
+                                <Image Source="{TemplateBinding Tag}" Width="24" Height="24" Margin="0,0,8,0"/>
+
+                                <!-- Button Text-->
+                                <ContentPresenter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Content="{TemplateBinding Content}"
+                                        />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Soft-bg-Blue-Color}" TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--#endregion-->
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="54"/>
+            <RowDefinition/>
+            <RowDefinition Height="54"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label Content="Database Settings :" Padding="10 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+               Background="White" FontSize="28" FontWeight="Bold" VerticalContentAlignment="Center"/>
+        <!-- DATABASE SETTINGS -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!-- IMPORT Button-->
+            <Border x:Name="Import_excel_btn" Background="{StaticResource Soft-bg-Blue-Color}" CornerRadius="10" Width="200" Height="150" Padding="15"
+                    Cursor="Hand" MouseDown="Import_excel_btn_Click" Grid.Column="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Width="48" Height="48">
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="{StaticResource Dark-main-Blue-Color}" Data="M12,3C8.59,3 5.69,4.07 4.54,5.57L9.79,10.82C10.5,10.93 11.22,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M3.92,7.08L2.5,8.5L5,11H0V13H5L2.5,15.5L3.92,16.92L8.84,12M20,9C20,11.21 16.42,13 12,13C11.34,13 10.7,12.95 10.09,12.87L7.62,15.34C8.88,15.75 10.38,16 12,16C16.42,16 20,14.21 20,12M20,14C20,16.21 16.42,18 12,18C9.72,18 7.67,17.5 6.21,16.75L4.53,18.43C5.68,19.93 8.59,21 12,21C16.42,21 20,19.21 20,17" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Text="Import an Excel file" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Dark-main-Blue-Color}"/>
+                </Grid>
+            </Border>
+            
+            <!-- EXPORT Button-->
+            <Border x:Name="Export_excel_btn" Background="{StaticResource Soft-green-Color}" CornerRadius="10" Width="200" Height="150" Padding="15"
+                    Cursor="Hand" MouseDown="Export_excel_btn_Click" Grid.Column="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Width="48" Height="48">
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="{StaticResource Success-green-Color}" Data="M21.17 3.25Q21.5 3.25 21.76 3.5 22 3.74 22 4.08V19.92Q22 20.26 21.76 20.5 21.5 20.75 21.17 20.75H7.83Q7.5 20.75 7.24 20.5 7 20.26 7 19.92V17H2.83Q2.5 17 2.24 16.76 2 16.5 2 16.17V7.83Q2 7.5 2.24 7.24 2.5 7 2.83 7H7V4.08Q7 3.74 7.24 3.5 7.5 3.25 7.83 3.25M7 13.06L8.18 15.28H9.97L8 12.06L9.93 8.89H8.22L7.13 10.9L7.09 10.96L7.06 11.03Q6.8 10.5 6.5 9.96 6.25 9.43 5.97 8.89H4.16L6.05 12.08L4 15.28H5.78M13.88 19.5V17H8.25V19.5M13.88 15.75V12.63H12V15.75M13.88 11.38V8.25H12V11.38M13.88 7V4.5H8.25V7M20.75 19.5V17H15.13V19.5M20.75 15.75V12.63H15.13V15.75M20.75 11.38V8.25H15.13V11.38M20.75 7V4.5H15.13V7Z" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Text="Export all the data as an Excel file" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Success-green-Color}"/>
+                </Grid>
+            </Border>
+
+            <!-- DELETE Button-->
+            <Border x:Name="Delete_excel_btn" Background="{StaticResource Soft-red-Color}" CornerRadius="10" Width="200" Height="150" Padding="15"
+                    Cursor="Hand" MouseDown="Delete_excel_btn_Click" Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Width="48" Height="48">
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="{StaticResource Failed-red-Color}" Data="M17 4V6H3V4H6.5L7.5 3H12.5L13.5 4H17M4 19V7H16V19C16 20.1 15.1 21 14 21H6C4.9 21 4 20.1 4 19M19 15H21V17H19V15M19 7H21V13H19V7Z" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Text="Delete all the data of this Application" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Failed-red-Color}"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Label Grid.Row="2" Content="Accounts Settings :" Padding="10 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+               Background="White" FontSize="28" FontWeight="Bold" VerticalContentAlignment="Center"/>
+        <!-- USERS SETTINGS -->
+        <Grid Grid.Row="3" Margin="10">
+            
+        </Grid>
+    </Grid>
+</Page>
