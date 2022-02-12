@@ -213,18 +213,35 @@ namespace Huber_Management.Controls
             }
         }
 
+        decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+
         private void price_add_LostFocus(object sender, RoutedEventArgs e)
         {
             decimal price_euro = 0;
             decimal.TryParse(((TextBox)sender).Text.ToString(), out price_euro);
-            price_add_DT.Text = (price_euro * 3).ToString();
+            string price_c = (price_euro * dt_value).ToString();
+
+            if (price_c.Contains("."))
+            {
+                price_c += "000";
+                price_add_DT.Text = price_c.Remove(price_c.IndexOf(".") + 3);
+            }
+            else
+            {
+                price_add_DT.Text = price_c;
+            }
         }
 
         private void price_add_DT_LostFocus(object sender, RoutedEventArgs e)
         {
             decimal price_dt = 0;
             decimal.TryParse(((TextBox)sender).Text.ToString(), out price_dt);
-            string price_c = (price_dt / 3).ToString();
+            string price_c = "";
+            if (dt_value != 0)
+            {
+                price_c = (price_dt / dt_value).ToString();
+            }
+
             if (price_c.Contains("."))
             {
                 price_c += "000";

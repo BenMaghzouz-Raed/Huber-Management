@@ -26,6 +26,7 @@ namespace Huber_Management.Controls
             InitializeComponent();
             new_search_page = new search_page(serial_nb_detail);
             Add_reception_container.Content = new_search_page;
+
         }
 
         public search_page new_search_page { get; set; }

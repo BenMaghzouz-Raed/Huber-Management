@@ -70,6 +70,16 @@ namespace Huber_Management.Controls
                     throw;
                 }
             }
+
+            // PRIVILEGES SETTINGS
+            if (!MainWindow.Connected_user.canDelete)
+            {
+                MenuItem_Delete.Visibility = Visibility.Collapsed;
+            }
+            if (!MainWindow.Connected_user.canEdit)
+            {
+                MenuItem_modify.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void Tool_row_element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

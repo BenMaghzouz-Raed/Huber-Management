@@ -88,8 +88,13 @@
                                FontSize="14" Foreground="{StaticResource Label-Gray-Color}"
                                TextWrapping="WrapWithOverflow"/>
 
-                <TextBlock x:Name="actual_stock_detail" Grid.Row="2" Padding="10 5" Text="0 Available" Background="{StaticResource Soft-green-Color}"
-                               HorizontalAlignment="Left" FontWeight="DemiBold" FontSize="16" Foreground="{StaticResource Success-green-Color}"/>
+                <StackPanel  Grid.Row="2" Orientation="Horizontal"  HorizontalAlignment="Left">
+                    <TextBlock x:Name="actual_stock_detail" Padding="10 5" ToolTip="Actual Stock" Margin="0 0 20 0" Text="0 Available" Background="{StaticResource Soft-green-Color}"
+                               FontWeight="DemiBold" FontSize="16" Foreground="{StaticResource Success-green-Color}"/>
+                    
+                    <TextBlock x:Name="defective_detail" Padding="10 5" ToolTip="Defective quantity" Text="0" Background="{StaticResource Soft-red-Color}"
+                                FontWeight="DemiBold" FontSize="16" Foreground="{StaticResource Failed-red-Color}"/>
+                </StackPanel>
             </Grid>
 
             <!-- BUTTONS -->
@@ -142,7 +147,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <!-- Edit Tool-->
-                        <Button  HorizontalAlignment="Stretch" Padding="5 0" ToolTip="Edit the Tool" materialDesign:ButtonAssist.CornerRadius="0"
+                        <Button x:Name="MenuItem_modify" HorizontalAlignment="Stretch" Padding="5 0" ToolTip="Edit the Tool" materialDesign:ButtonAssist.CornerRadius="0"
                     Background="{StaticResource Grey-Blue-Color}" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                     BorderBrush="{StaticResource Grey-Blue-Color}" Click="MenuItem_modify_Click" Height="36">
                             <Grid>
@@ -159,7 +164,7 @@
                         </Button>
                         
                         <!-- Delete Tool-->
-                        <Button  Grid.Column="1" HorizontalAlignment="Stretch" Padding="5 0" ToolTip="Delete from the Database" materialDesign:ButtonAssist.CornerRadius="0"
+                        <Button x:Name="MenuItem_Delete"  Grid.Column="1" HorizontalAlignment="Stretch" Padding="5 0" ToolTip="Delete from the Database" materialDesign:ButtonAssist.CornerRadius="0"
                     Background="Transparent" Style="{StaticResource MaterialDesignFlatDarkBgButton}"  materialDesign:ShadowAssist.ShadowDepth="Depth0"
                     BorderBrush="Transparent" Click="MenuItem_Delete_Click" Height="36">
                             <Grid>

@@ -13,13 +13,34 @@
     <Compile Update="Controls\Customs\TableHeader_RadioBtn.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controls\Rows\All_History_row.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Rows\Faulty_tool_row.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Rows\Repaired_tool_row.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Rows\Search_from_defective_row.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\Window-Pages\Add_new_page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Window-Pages\Faulty_fields_page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Window-Pages\output_fields_page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Window-Pages\reception_fields_page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Window-Pages\Repaired_fields_page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Window-Pages\search_from_defective_page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Window-Pages\search_page.xaml.cs">
@@ -31,10 +52,16 @@
     <Compile Update="Controls\Window-Pages\Single_tool_history_page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controls\Windows\Add_faulty_tool_window.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\Windows\Add_new_output_Window.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Windows\Add_new_reception_Window.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Windows\Add_repaired_tool_window.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Windows\Add_Tool_Window.xaml.cs">
@@ -47,6 +74,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Customs\MaterialCards.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Windows\Add_user_window.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Controls\Windows\Modify_tool_Window.xaml.cs">
@@ -94,9 +124,6 @@
     <Compile Update="Pages\History_page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\Maintenance_plan_page.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Pages\Output_page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -123,13 +150,34 @@
     <Page Update="Controls\Customs\TableHeader_RadioBtn.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Controls\Rows\All_History_row.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Rows\Faulty_tool_row.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Rows\Repaired_tool_row.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Rows\Search_from_defective_row.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\Window-Pages\Add_new_page.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Window-Pages\Faulty_fields_page.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Window-Pages\output_fields_page.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Window-Pages\reception_fields_page.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Window-Pages\Repaired_fields_page.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Window-Pages\search_from_defective_page.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Window-Pages\search_page.xaml">
@@ -141,10 +189,16 @@
     <Page Update="Controls\Window-Pages\Single_tool_history_page.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Controls\Windows\Add_faulty_tool_window.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\Windows\Add_new_output_Window.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Windows\Add_new_reception_Window.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Windows\Add_repaired_tool_window.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Windows\Add_Tool_Window.xaml">
@@ -157,6 +211,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Customs\MaterialCards.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Windows\Add_user_window.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Windows\Modify_tool_Window.xaml">
@@ -205,9 +262,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Pages\History_page.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Pages\Maintenance_plan_page.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Pages\Output_page.xaml">

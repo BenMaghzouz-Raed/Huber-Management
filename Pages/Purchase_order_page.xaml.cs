@@ -7,6 +7,8 @@ using System.Data;
 using System.Data.SqlClient;
 using Huber_Management.Controls;
 using System.Collections.Generic;
+using Microsoft.Win32;
+using ClosedXML.Excel;
 
 namespace Huber_Management.Pages
 {
@@ -15,6 +17,7 @@ namespace Huber_Management.Pages
     /// </summary>
     public partial class Purchase_order_page : Page
     {
+        public static List<string> selected_serial_id { get; set; } = new List<string>();
         public Purchase_order_page()
         {
             InitializeComponent();
@@ -22,16 +25,23 @@ namespace Huber_Management.Pages
 
         void Load(object sender, RoutedEventArgs e)
         {
+
+            if (!MainWindow.Connected_user.canPurchaseOrder)
+            {
+                Purchase.IsEnabled = false;
+                Purchase.Visibility = Visibility.Collapsed;
+            }
+
             serial_id.tableHeader_Label.Content = serial_id.Tag.ToString();
             min_stock.tableHeader_Label.Content = min_stock.Tag.ToString();
             actual_stock.tableHeader_Label.Content = actual_stock.Tag.ToString();
             needed_quantity.tableHeader_Label.Content = needed_quantity.Tag.ToString();
             total_nq.tableHeader_Label.Content = total_nq.Tag.ToString();
             supplier.tableHeader_Label.Content = supplier.Tag.ToString();
+            criticality.tableHeader_Label.Content = criticality.Tag.ToString();
 
             InitializeAllData();
         }
-        public List<string> selected_serial_id { get; set; } = new List<string>();
 
         public Controls.TableHeader_RadioBtn Selected_sort_by { get; set; } = null;
 
@@ -51,30 +61,26 @@ namespace Huber_Management.Pages
             // FILTER CONVERTER
             switch (filter)
             {
-                case "Added Date":
-                    filter = "";
+                case "Serial Number":
+                    filter = "Tool_serial_id";
                     break;
-                case "A-Z":
-                    filter = "";
+                case "Drawing":
+                    filter = "Tool_drawing";
                     break;
-                case "Actual Stock":
-                    filter = "";
+                case "Supplier":
+                    filter = "Tool_supplier";
+                    break;
+                case "Position":
+                    filter = "Tool_position";
                     break;
                 default:
-                    query += "";
+                    filter = "Tool_serial_id";
                     break;
             }
             // SEARCH CONVERTER
-            if (_search_text != "" && _search_text != "Search by ID or Name..." && _search_text.Length > 0)
+            if (_search_text != "" && _search_text.Length > 0)
             {
-                if (filter == "")
-                {
-                    query += "WHERE Tool_serial_id LIKE '%" + _search_text + "%' ";
-                }
-                else
-                {
-                    query += "WHERE Tool_serial_id LIKE '%" + _search_text + "%' ";
-                }
+                query += "AND " + filter + " LIKE '%" + _search_text + "%' ";
             }
             // SORT BY CONVERTER
             switch (sort_by)
@@ -99,8 +105,11 @@ namespace Huber_Management.Pages
                     sort_by = "Tool_supplier";
                     DESC = !DESC;
                     break;
+                case "criticality":
+                    sort_by = "Tool_criticality";
+                    break;
                 default:
-                    sort_by = "Tool_date_added";
+                    sort_by = "Tool_criticality";
                     break;
             }
             query += " Order by " + sort_by;
@@ -121,14 +130,14 @@ namespace Huber_Management.Pages
             {
                 MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            if (All_tools_rows_panel != null)
+            if (All_tools_rows_panel != null && all_data.Rows.Count > 0)
             {
                 All_tools_rows_panel.Children.Clear();
                 foreach (DataRow row in all_data.Rows)
                 {
                     int criticality = 0;
                     int.TryParse(row["Tool_criticality"].ToString(), out criticality);
-
+                    bool isChecked = false;
                     Tools_c newTool = new Tools_c
                     {
                         Tool_serial_id = (string)row["Tool_serial_id"],
@@ -146,9 +155,18 @@ namespace Huber_Management.Pages
                         Tool_image_path = (string)row["Tool_image_path"],
                         Tool_criticality = criticality,
                     };
-                    All_tools_rows_panel.Children.Add(new Controls.Out_of_stock_row(newTool));
+                    if (selected_serial_id.Contains(row["Tool_serial_id"].ToString()))
+                    {
+                        isChecked = true;
+                    }
+                    All_tools_rows_panel.Children.Add(new Controls.Out_of_stock_row(newTool, isChecked));
                 }
 
+            }
+            else
+            {
+                All_tools_rows_panel.Children.Clear();
+                All_tools_rows_panel.Children.Add(this.noDataFound);
             }
 
             Database_c.Close_DB_Connection();
@@ -161,29 +179,53 @@ namespace Huber_Management.Pages
 
         }
 
-        private void Purchase_Click(object sender, RoutedEventArgs e)
+        private async void Purchase_Click(object sender, RoutedEventArgs e)
         {
-            if (this.All_tools_rows_panel != null)
-            {
-                selected_serial_id.Clear();
-                foreach (Out_of_stock_row row in this.All_tools_rows_panel.Children)
+            if (selected_serial_id.Count > 0)
+            { // Export Excel File
+                SaveFileDialog SaveDialog = new SaveFileDialog() { Filter = "Excel|*.xlsx|*.xls|*.xlsm" };
+                Nullable<bool> returned = SaveDialog.ShowDialog();
+
+                if (returned == true)
                 {
-                    bool isselected = Convert.ToBoolean(row.checkbox.IsChecked.Value);
-                    if (isselected)
+                    try
                     {
-                        selected_serial_id.Add(row.tools_row_serial_id.Content.ToString());
+                        SqlConnection conn = Database_c.Get_DB_Connection();
+                        string[] selected_array = selected_serial_id.ToArray();
+                        DataTable Tools_Table = new DataTable();
+
+                        for (int i = 0; i < selected_array.Length; i++)
+                        {
+                            string serial_id = selected_array[i];
+                            string query = "SELECT Tool_position as Position, Tool_serial_id as Marque, Tool_designation as Désignation, (Tool_stock_mini - Tool_actual_stock) as Quantité, " +
+                                "Tool_price as Prix_Unitaire, (Tool_price*(Tool_stock_mini - Tool_actual_stock)) as Total_Euro, Tool_project as Centre_De_Coût, Tool_supplier as Fournisseur FROM Tools WHERE ( Tool_stock_mini > Tool_actual_stock ) AND Tool_serial_id = '" + serial_id + "' ";
+
+                            SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                            adapter.Fill(Tools_Table);
+                        }
+
+                        XLWorkbook book = new XLWorkbook();
+                        book.Worksheets.Add(Tools_Table, "Ordres d'achat");
+
+                        book.SaveAs(SaveDialog.FileName);
+
+                        // SUCCESS
+                        MessageBox.Show(SaveDialog.FileName + " is saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Database_c.Close_DB_Connection();
+                        return;
                     }
-                }
-                if (selected_serial_id.Count > 0)
-                {
-                    MessageBox.Show(selected_serial_id.Count + " Success !", "Message", MessageBoxButton.OK, MessageBoxImage.Information);
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Database_c.Close_DB_Connection();
+                        return;
+                    }
 
                 }
-                else
-                {
-                    MessageBox.Show("You didn't select any tool !", "Message", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-
+            }
+            else
+            {
+                MessageBox.Show("You didn't select any tool !", "Message", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
         }
@@ -233,6 +275,7 @@ namespace Huber_Management.Pages
 
         private void select_all_Checked(object sender, RoutedEventArgs e)
         {
+            selected_serial_id = new List<string>();
             foreach (Out_of_stock_row row in this.All_tools_rows_panel.Children)
             {
                 row.checkbox.IsChecked = true;
@@ -241,6 +284,7 @@ namespace Huber_Management.Pages
 
         private void select_all_Unchecked(object sender, RoutedEventArgs e)
         {
+            selected_serial_id = new List<string>();
             foreach (Out_of_stock_row row in this.All_tools_rows_panel.Children)
             {
                 row.checkbox.IsChecked = false;

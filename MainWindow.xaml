@@ -9,11 +9,12 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
+        TextElement.FontSize="13" Loaded="Window_Loaded"
         TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"        
+        TextOptions.TextRenderingMode="Auto"
+        Closed="Window_Closed"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Managment APP" Height="700" Width="1300" ResizeMode="CanResize" 
+        Title="Management Application:" Height="700" Width="1300" ResizeMode="CanResize" 
         WindowStartupLocation="CenterScreen" WindowState="Normal" 
         MinWidth="1000" MinHeight="700" 
         Background="{StaticResource Screen-bg-Color}" 
@@ -120,23 +121,27 @@
                             <!-- Output -->
                             <RadioButton Content="Output" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
                                                       Uid="/Pages/Output_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Output}"/>
-                            <!-- Repaired Tools -->
-                            <RadioButton Content="Repaired Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
-                                                      Uid="/Pages/Repaired_Tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Repaired_tools}"/>
-                            <!-- Faulty Tools -->
-                            <RadioButton Content="Faulty Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
-                                                      Uid="/Pages/Faulty_Tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Faulty_tools_Tools}"/>
                         </StackPanel>
                     </Border>
                     <!-- Second Section -->
                     <Border Background="White" BorderThickness="0,0,0,3" BorderBrush="#FFF8F8F9" DockPanel.Dock="Top">
                         <StackPanel Margin="0,20,0,20" Orientation="Vertical" DockPanel.Dock="Top">
+                            
                             <!-- Purchase Order -->
                             <RadioButton Content="Purchase Order" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
                                                       Uid="/Pages/Purchase_order_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Purchase_order}"/>
+
+                            <!-- Faulty Tools -->
+                            <RadioButton Content="Defective Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Faulty_Tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Faulty_tools_Tools}"/>
+
+                            <!-- Repaired Tools -->
+                            <RadioButton Content="Repaired Tools" Style="{DynamicResource sidebarCheckbox}" Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Repaired_Tools_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Repaired_tools}"/>
+                        
                             <!-- Maintenance Plan -->
-                            <RadioButton Content="Maintenance Plan" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
-                                                      Uid="/Pages/Maintenance_plan_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Maintenance_plan}"/>
+                            <!--<RadioButton Content="Maintenance Plan" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                                                      Uid="/Pages/Maintenance_plan_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Maintenance_plan}"/>-->
                         </StackPanel>
                     </Border>
 
@@ -147,12 +152,38 @@
                             <RadioButton Content="History" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
                                                       Uid="/Pages/History_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource History}"/>
                             <!-- Settings -->
-                            <RadioButton Content="Settings" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
+                            <RadioButton x:Name="settings_button" Content="Settings" Style="{DynamicResource sidebarCheckbox}"  Foreground="{StaticResource Grey-Blue-Color}" GroupName="Pages_nav"
                                                       Uid="/Pages/Settings_page.xaml" Checked="SideBar_checkbox_Click" Tag="{DynamicResource Settings}"/>
                         </StackPanel>
                     </Border>
-                    <RadioButton x:Name="Logout_btn" Style="{DynamicResource sidebarCheckbox}" Content="Log Out" Tag="{DynamicResource Logout}" 
-                                 DockPanel.Dock="Bottom" Height="40" VerticalAlignment="Bottom" Checked="Logout_btn_Checked" Foreground="{StaticResource Failed-red-Color}"/>
+
+
+                    <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+                        <!-- user profile -->
+                        <Grid Background="{DynamicResource Soft-green-Color}" Name="grid_btn" Height="50">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="icon_column" Width="56"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="24"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Canvas Width="24" Height="24" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Path x:Name="icon_btn" Fill="{StaticResource Grey-Blue-Color}" Data="{DynamicResource Admin}"/>
+                            </Canvas>
+
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <TextBlock Name="user_full_name" FontWeight="Regular" FontSize="16" Text="Saif Eddine Hamdi" Foreground="{StaticResource Grey-Blue-Color}"
+                                       TextWrapping="NoWrap" MaxWidth="140" TextTrimming="CharacterEllipsis"/>
+
+                                <Label Name="Privilege" Foreground="{StaticResource Success-green-Color}" Content="Admin" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="9" Padding="0" FontWeight="SemiBold"/>
+                            </StackPanel>
+
+                            <Ellipse Grid.Column="2" HorizontalAlignment="Center" Height="10" Width="10" Fill="{DynamicResource Success-green-Color}"/>
+                        </Grid>
+
+                        <RadioButton x:Name="Logout_btn" Style="{DynamicResource sidebarCheckbox}" Content="Log Out" Tag="{DynamicResource Logout}" 
+                                 Height="40" VerticalAlignment="Bottom" Checked="Logout_btn_Checked" Foreground="{StaticResource Failed-red-Color}"/>
+                    </StackPanel>
                 </DockPanel>  
             </Border>
             

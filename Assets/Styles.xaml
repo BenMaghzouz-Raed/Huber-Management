@@ -1,14 +1,31 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
-    <!-- Start: Table Header -->
+
+    <!-- SEARCH TEXTBOX : all_tool_page ... -->
+    <Style x:Key="searchTextBox" BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="{x:Type TextBox}">
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="0"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Background" Value="{DynamicResource Screen-bg-Color}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Label-Gray-Color}"/>
+        <Setter Property="SelectionBrush" Value="Blue"/>
+        <Setter Property="SelectionOpacity" Value="0.4"/>
+    </Style>
+
+    
+    <!-- TABLE HEADER -->
     <Style x:Key="Table-Header-style" TargetType="Border">
         <Setter Property="CornerRadius" Value="8,8,0,0"/>
         <Setter Property="Margin" Value="0,0,18,6"/>
         <Setter Property="Height" Value="40"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-    <!-- Start: Table Header -->
 
     <Style x:Key="Table-Header-label" TargetType="Label">
         <Setter Property="FontSize" Value="14"/>
@@ -50,7 +67,7 @@
         </Setter>
     </Style>
 
-    <!-- MAINWINDOW SIDEBAR NAVIGATION BUTTONS-->
+    <!-- MAIN_WINDOW SIDEBAR NAVIGATION BUTTONS-->
     <Style x:Key="sidebarCheckbox" TargetType="RadioButton">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FontSize" Value="18"/>
@@ -67,7 +84,7 @@
 
                         <Border x:Name="Left_line" Visibility="Collapsed" Width="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
                         <!--<Image Source="{TemplateBinding ImageSource}" Width="24" Height="24"/>-->
-                        <Canvas Width="28" Height="28"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Canvas Width="24" Height="24" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Path x:Name="icon_btn" Fill="{TemplateBinding Foreground}" Data="{TemplateBinding Tag}"/>
                         </Canvas>
                         <TextBlock Name="text_block" Grid.Column="2" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
@@ -94,6 +111,14 @@
         </Setter>
     </Style>
 
+    <!-- CONNECTED USER PROFILE SIDEBAR-->
+    <Style x:Key="connected_user_profile_style" TargetType="RadioButton">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        
+    </Style>
+    
     <!-- TEXTBOX MATERIAL DSIGN STYLE for add new tool, add reception ... -->
     <Style x:Key="textBoxInputStyle" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}" TargetType="{x:Type TextBox}">
         <Setter Property="Height" Value="50"/>
@@ -102,6 +127,20 @@
         <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="2"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="FontSize" Value="16"/>
+        <Setter Property="SelectionBrush" Value="Blue"/>
+        <Setter Property="SelectionOpacity" Value="0.4"/>
+    </Style>
+    
+    <!-- PASSWORD MATERIAL DSIGN STYLE for add new user ... -->
+    <Style x:Key="passwordBoxInputStyle" BasedOn="{StaticResource MaterialDesignOutlinedPasswordBox}" TargetType="{x:Type PasswordBox}">
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="2"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="SelectionBrush" Value="Blue"/>
+        <Setter Property="SelectionOpacity" Value="0.4"/>
     </Style>
 
     <!-- COMBOBOX MATERIAL DSIGN STYLE for add new tool, add reception ... -->

@@ -19,7 +19,7 @@ namespace Huber_Management.Controls
     /// </summary>
     public partial class Out_of_stock_row : UserControl
     {
-        public Out_of_stock_row(Tools_c out_of_stock_tool)
+        public Out_of_stock_row(Tools_c out_of_stock_tool, bool isChecked = false)
         {
             InitializeComponent();
             if (out_of_stock_tool.Tool_image_path != "")
@@ -33,7 +33,7 @@ namespace Huber_Management.Controls
                     throw;
                 }
             }
-
+            checkbox.IsChecked = isChecked;
             tools_row_serial_id.Content = out_of_stock_tool.Tool_serial_id;
             tools_row_actual_stock.Content = out_of_stock_tool.Tool_actual_stock;
             tools_row_stock_mini.Content = out_of_stock_tool.Tool_stock_mini;
@@ -41,9 +41,11 @@ namespace Huber_Management.Controls
 
             decimal price = 0;
             decimal.TryParse(((out_of_stock_tool.Tool_stock_mini - out_of_stock_tool.Tool_actual_stock) * out_of_stock_tool.Tool_price).ToString(), out price);
-            string price_c = price.ToString("C").Remove(0, 1) + " €";
-            string price_dt_c = (price * 3).ToString("C").Remove(0, 1);
-            tools_row_total_nq.Content = price_c;
+            string price_c = price.ToString("C").Remove(0, 1);
+
+            decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+            string price_dt_c = (price * dt_value).ToString("C").Remove(0, 1);
+            tools_row_total_nq.Content = price_c + " €";
             tools_row_total_nq.ToolTip = price_dt_c + " DT";
 
             tools_row_supplier.Content = out_of_stock_tool.Tool_supplier;
@@ -90,38 +92,45 @@ namespace Huber_Management.Controls
         private void checkbox_Checked(object sender, RoutedEventArgs e)
         {
             Tool_row_element.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#DFEDF7");
+            if (!Pages.Purchase_order_page.selected_serial_id.Contains(this.tools_row_serial_id.Content.ToString()))
+            {
+                Pages.Purchase_order_page.selected_serial_id.Add(this.tools_row_serial_id.Content.ToString());
+            }
         }
 
         private void checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             Tool_row_element.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
+            if (Pages.Purchase_order_page.selected_serial_id.Contains(this.tools_row_serial_id.Content.ToString()))
+            {
+                Pages.Purchase_order_page.selected_serial_id.Remove(this.tools_row_serial_id.Content.ToString());
+            }
         }
 
         public void criticality_converter(int criticality_val)
         {
-            string converted_value = "";
-            switch (criticality_val)
+            string converted_value = "A";
+
+            int A_value = MainWindow.Default_settings.Criticality_A_value;
+            int B_value = MainWindow.Default_settings.Criticality_B_value;
+            int C_value = MainWindow.Default_settings.Criticality_C_value;
+            if (criticality_val <= C_value)
             {
-                case <= 15:
-                    tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FBEDD9");
-                    tool_criticality.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFA427");
-                    tool_criticality.BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFA427");
-                    converted_value = "C";
-                    break;
-                case <= 60:
-                    converted_value = "B";
-                    break;
-                case <= 90:
-                    converted_value = "A";
-                    break;
-                default:
-                    converted_value = "A";
-                    break;
+                tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#005596");
+                converted_value = "C";
+            }
+            else if (criticality_val <= B_value && criticality_val > C_value)
+            {
+                tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#DF781C");
+                converted_value = "B";
+            }
+            else if( criticality_val <= A_value && criticality_val > B_value)
+            {
+                converted_value = "A";
             }
 
             tool_criticality.Text = converted_value;
-            tool_criticality.ToolTip = criticality_val.ToString() + " Days";
-
+            tool_criticality.ToolTip = "Lead time = " + criticality_val.ToString() + " Days";
         }
 
     }

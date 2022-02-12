@@ -38,10 +38,33 @@ namespace Huber_Management.Pages
                 decimal price = 0;
                 decimal.TryParse(row["PRICE"].ToString(), out price);
                 string price_c = price.ToString("C").Remove(0, 1);
-                string price_dt_c = (price*3).ToString("C").Remove(0, 1);
                 total_price.Text = price_c + " €";
+
+                decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+                string price_dt_c = (price*dt_value).ToString("C").Remove(0, 1);
                 total_price.ToolTip = price_dt_c + " DT";
             }
+
+            // Total Saving
+            DataTable total_saving = new DataTable();
+            string query1 = "SELECT SUM(Repaired_quantity*Tool_price) as SAVING From Tools, Repaired_Tools WHERE ( Repaired_Tools.Tool_serial_id = Tools.Tool_serial_id )";
+            SqlDataAdapter adapter1 = new SqlDataAdapter(query1, conn);
+            adapter1.Fill(total_saving);
+
+            if (total_saving.Rows.Count > 0)
+            {
+                DataRow row = total_saving.Rows[0];
+
+                decimal saving = 0;
+                decimal.TryParse(row["SAVING"].ToString(), out saving);
+                string price_c = saving.ToString("C").Remove(0, 1);
+                total_gain.Content = price_c + " €";
+
+                decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+                string price_dt_c = (saving * dt_value).ToString("C").Remove(0, 1);
+                total_gain.ToolTip = price_dt_c + " DT";
+            }
+
         }
 
         public async void InitializeOutOfStockTable(SqlConnection conn)
@@ -74,7 +97,7 @@ namespace Huber_Management.Pages
 
         public void InitializeChart()
         {
-            InputChart.ChartTitle.Text = "Monthly Spendings";
+            InputChart.ChartTitle.Text = "Monthly Saving";
         }
 
     }

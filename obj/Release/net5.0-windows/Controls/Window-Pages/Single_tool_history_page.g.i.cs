@@ -61,8 +61,7 @@ namespace Huber_Management.Controls {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Huber-Management;V1.0.0.0;component/controls/window-pages/single_tool_history_pa" +
-                    "ge.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Huber-Management;component/controls/window-pages/single_tool_history_page.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Controls\Window-Pages\Single_tool_history_page.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

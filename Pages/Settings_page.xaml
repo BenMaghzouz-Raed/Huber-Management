@@ -4,7 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Huber_Management.Pages"
-      mc:Ignorable="d" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d"  Loaded="Page_Loaded"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Settings_page">
     <Page.Resources>
@@ -49,79 +50,208 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="54"/>
-            <RowDefinition/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="54"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        
+        <!-- DATABASE SETTINGS LABEL -->
         <Label Content="Database Settings :" Padding="10 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                Background="White" FontSize="28" FontWeight="Bold" VerticalContentAlignment="Center"/>
+        
         <!-- DATABASE SETTINGS -->
         <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions> 
+            
+            <!-- DATABASE IMPORT EXPORT DELETE-->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <!-- IMPORT Button-->
+                <Border x:Name="Import_excel_btn" Margin="0 0 5 5" Background="{StaticResource Soft-bg-Blue-Color}" CornerRadius="10" Padding="15 10"
+                    Cursor="Hand" MouseDown="Import_excel_btn_Click" Grid.Column="0">
+                    <StackPanel Orientation="Horizontal">
+                        <Viewbox Width="48" Height="48">
+                            <Canvas Width="24" Height="24">
+                                <Path Fill="{StaticResource Dark-main-Blue-Color}" Data="M12,3C8.59,3 5.69,4.07 4.54,5.57L9.79,10.82C10.5,10.93 11.22,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M3.92,7.08L2.5,8.5L5,11H0V13H5L2.5,15.5L3.92,16.92L8.84,12M20,9C20,11.21 16.42,13 12,13C11.34,13 10.7,12.95 10.09,12.87L7.62,15.34C8.88,15.75 10.38,16 12,16C16.42,16 20,14.21 20,12M20,14C20,16.21 16.42,18 12,18C9.72,18 7.67,17.5 6.21,16.75L4.53,18.43C5.68,19.93 8.59,21 12,21C16.42,21 20,19.21 20,17" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock Text="Import an Excel file" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Dark-main-Blue-Color}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- EXPORT Button-->
+                <Border x:Name="Export_excel_btn" Margin="0 5 5 5" Background="{StaticResource Soft-green-Color}" CornerRadius="10" Padding="15 10"
+                    Cursor="Hand" MouseDown="Export_excel_btn_Click" Grid.Row="1">
+                    <StackPanel Orientation="Horizontal">
+                        <Viewbox Width="48" Height="48">
+                            <Canvas Width="24" Height="24">
+                                <Path Fill="{StaticResource Success-green-Color}" Data="M21.17 3.25Q21.5 3.25 21.76 3.5 22 3.74 22 4.08V19.92Q22 20.26 21.76 20.5 21.5 20.75 21.17 20.75H7.83Q7.5 20.75 7.24 20.5 7 20.26 7 19.92V17H2.83Q2.5 17 2.24 16.76 2 16.5 2 16.17V7.83Q2 7.5 2.24 7.24 2.5 7 2.83 7H7V4.08Q7 3.74 7.24 3.5 7.5 3.25 7.83 3.25M7 13.06L8.18 15.28H9.97L8 12.06L9.93 8.89H8.22L7.13 10.9L7.09 10.96L7.06 11.03Q6.8 10.5 6.5 9.96 6.25 9.43 5.97 8.89H4.16L6.05 12.08L4 15.28H5.78M13.88 19.5V17H8.25V19.5M13.88 15.75V12.63H12V15.75M13.88 11.38V8.25H12V11.38M13.88 7V4.5H8.25V7M20.75 19.5V17H15.13V19.5M20.75 15.75V12.63H15.13V15.75M20.75 11.38V8.25H15.13V11.38M20.75 7V4.5H15.13V7Z" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock Text="Export all the data as an Excel file" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Success-green-Color}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- DELETE Button-->
+                <Border x:Name="Delete_excel_btn" Margin="0 5 5 5" Background="{StaticResource Soft-red-Color}" CornerRadius="10" Padding="15 10"
+                    Cursor="Hand" MouseDown="Delete_excel_btn_Click" Grid.Row="2">
+                    <StackPanel Orientation="Horizontal">
+                        <Viewbox Width="48" Height="48">
+                            <Canvas Width="24" Height="24">
+                                <Path Fill="{StaticResource Failed-red-Color}" Data="M17 4V6H3V4H6.5L7.5 3H12.5L13.5 4H17M4 19V7H16V19C16 20.1 15.1 21 14 21H6C4.9 21 4 20.1 4 19M19 15H21V17H19V15M19 7H21V13H19V7Z" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock Text="Delete all the data of this Application" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Failed-red-Color}"/>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+            
+            <!-- DATABASE OTHER SETTINGS-->
+            <Grid Grid.Column="1" Margin="10 0 0 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- CONVERT PRICE VALUE CHANGE-->
+                <StackPanel>
+                    <TextBox x:Name="price_convert_value" Margin="0 5 5 5"  Grid.Column="0" materialDesign:TextFieldAssist.HasTrailingIcon="True" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                             Style="{DynamicResource textBoxInputStyle}" materialDesign:HintAssist.Hint="Conversion Euro / Dinar" VerticalContentAlignment="Center" 
+                             Padding="12" materialDesign:TextFieldAssist.TrailingIcon="Exchange" IsEnabled="False"/>
+                </StackPanel>
+
+                <!-- CRITICALITY CHANGE-->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="criticality_a" Margin="0 5 5 5" Grid.Column="0" materialDesign:TextFieldAssist.HasTrailingIcon="True" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                             Style="{DynamicResource textBoxInputStyle}" HorizontalContentAlignment="Center" materialDesign:HintAssist.Hint="A" VerticalContentAlignment="Center" 
+                             Padding="12" materialDesign:TextFieldAssist.TrailingIcon="Schedule" IsEnabled="False"/>
+
+                    <TextBox x:Name="criticality_b" Margin="0 5 5 5" Grid.Column="1" materialDesign:TextFieldAssist.HasTrailingIcon="True" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                             Style="{DynamicResource textBoxInputStyle}" HorizontalContentAlignment="Center" materialDesign:HintAssist.Hint="B" VerticalContentAlignment="Center" 
+                             Padding="12" materialDesign:TextFieldAssist.TrailingIcon="Schedule" IsEnabled="False"/>
+                    <TextBox x:Name="criticality_c" Margin="0 5 5 5" Grid.Column="2" materialDesign:TextFieldAssist.HasTrailingIcon="True" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                             Style="{DynamicResource textBoxInputStyle}" HorizontalContentAlignment="Center" materialDesign:HintAssist.Hint="C" VerticalContentAlignment="Center" 
+                             Padding="12" materialDesign:TextFieldAssist.TrailingIcon="Schedule" IsEnabled="False"/>
+                </Grid>
+            
+                <!-- EDIT AND SAVE BUTTONS -->
+                <StackPanel Grid.Row="2" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0">
+                    
+                    <!-- EDIT BUTTON-->
+                    <Button x:Name="Edit_settings" Grid.Column="0" Padding="10 0" materialDesign:ButtonAssist.CornerRadius="0"
+                    HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatButton}"  materialDesign:ShadowAssist.ShadowDepth="Depth0" 
+                            Visibility="Visible" Click="Edit_settings_Click">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Canvas Width="25" Height="25" Grid.Column="0">
+                                <Path Fill="{StaticResource Dark-main-Blue-Color}" Data="M4,14V17C4,19 7.05,20.72 11,21V18.11L11.13,18C7.12,17.76 4,16.06 4,14M12,13C7.58,13 4,11.21 4,9V12C4,14.21 7.58,16 12,16C12.39,16 12.77,16 13.16,16L17,12.12C15.4,12.72 13.71,13 12,13M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M21,11.13C20.85,11.13 20.71,11.19 20.61,11.3L19.61,12.3L21.66,14.3L22.66,13.3C22.87,13.1 22.88,12.76 22.66,12.53L21.42,11.3C21.32,11.19 21.18,11.13 21.04,11.13M19.04,12.88L13,18.94V21H15.06L21.12,14.93L19.04,12.88Z" />
+                            </Canvas>
+                            <TextBlock Text="EDIT" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{StaticResource Dark-main-Blue-Color}"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- Save Button -->
+                    <Button x:Name="Save_changes" Grid.Column="0" Padding="10 0" materialDesign:ButtonAssist.CornerRadius="0"
+                    HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatButton}"  materialDesign:ShadowAssist.ShadowDepth="Depth0" 
+                            Visibility="Collapsed" Click="Save_changes_Click">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Canvas Width="25" Height="25" Grid.Column="0">
+                                <Path Fill="{StaticResource Dark-main-Blue-Color}" Data="M17 3H5C3.9 3 3 3.9 3 5V19C3 20.11 3.9 21 5 21H11.81C11.42 20.34 11.17 19.6 11.07 18.84C9.5 18.31 8.66 16.6 9.2 15.03C9.61 13.83 10.73 13 12 13C12.44 13 12.88 13.1 13.28 13.29C15.57 11.5 18.83 11.59 21 13.54V7L17 3M15 9H5V5H15V9M15.75 21L13 18L14.16 16.84L15.75 18.43L19.34 14.84L20.5 16.25L15.75 21" />
+                            </Canvas>
+                            <TextBlock Text="SAVE" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{StaticResource Dark-main-Blue-Color}"/>
+                        </Grid>
+                    </Button>
+
+                </StackPanel>
+            </Grid>
+
+        </Grid>
+
+        <!-- ACCOUNTS SETTINGS LABEL -->
+        <Grid  Grid.Row="2" Background="White" >
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <!-- IMPORT Button-->
-            <Border x:Name="Import_excel_btn" Background="{StaticResource Soft-bg-Blue-Color}" CornerRadius="10" Width="200" Height="150" Padding="15"
-                    Cursor="Hand" MouseDown="Import_excel_btn_Click" Grid.Column="0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Viewbox Width="48" Height="48">
-                        <Canvas Width="24" Height="24">
-                            <Path Fill="{StaticResource Dark-main-Blue-Color}" Data="M12,3C8.59,3 5.69,4.07 4.54,5.57L9.79,10.82C10.5,10.93 11.22,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M3.92,7.08L2.5,8.5L5,11H0V13H5L2.5,15.5L3.92,16.92L8.84,12M20,9C20,11.21 16.42,13 12,13C11.34,13 10.7,12.95 10.09,12.87L7.62,15.34C8.88,15.75 10.38,16 12,16C16.42,16 20,14.21 20,12M20,14C20,16.21 16.42,18 12,18C9.72,18 7.67,17.5 6.21,16.75L4.53,18.43C5.68,19.93 8.59,21 12,21C16.42,21 20,19.21 20,17" />
-                        </Canvas>
-                    </Viewbox>
-                    <TextBlock Text="Import an Excel file" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
-                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Dark-main-Blue-Color}"/>
-                </Grid>
-            </Border>
-            
-            <!-- EXPORT Button-->
-            <Border x:Name="Export_excel_btn" Background="{StaticResource Soft-green-Color}" CornerRadius="10" Width="200" Height="150" Padding="15"
-                    Cursor="Hand" MouseDown="Export_excel_btn_Click" Grid.Column="1">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Viewbox Width="48" Height="48">
-                        <Canvas Width="24" Height="24">
-                            <Path Fill="{StaticResource Success-green-Color}" Data="M21.17 3.25Q21.5 3.25 21.76 3.5 22 3.74 22 4.08V19.92Q22 20.26 21.76 20.5 21.5 20.75 21.17 20.75H7.83Q7.5 20.75 7.24 20.5 7 20.26 7 19.92V17H2.83Q2.5 17 2.24 16.76 2 16.5 2 16.17V7.83Q2 7.5 2.24 7.24 2.5 7 2.83 7H7V4.08Q7 3.74 7.24 3.5 7.5 3.25 7.83 3.25M7 13.06L8.18 15.28H9.97L8 12.06L9.93 8.89H8.22L7.13 10.9L7.09 10.96L7.06 11.03Q6.8 10.5 6.5 9.96 6.25 9.43 5.97 8.89H4.16L6.05 12.08L4 15.28H5.78M13.88 19.5V17H8.25V19.5M13.88 15.75V12.63H12V15.75M13.88 11.38V8.25H12V11.38M13.88 7V4.5H8.25V7M20.75 19.5V17H15.13V19.5M20.75 15.75V12.63H15.13V15.75M20.75 11.38V8.25H15.13V11.38M20.75 7V4.5H15.13V7Z" />
-                        </Canvas>
-                    </Viewbox>
-                    <TextBlock Text="Export all the data as an Excel file" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
-                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Success-green-Color}"/>
-                </Grid>
-            </Border>
 
-            <!-- DELETE Button-->
-            <Border x:Name="Delete_excel_btn" Background="{StaticResource Soft-red-Color}" CornerRadius="10" Width="200" Height="150" Padding="15"
-                    Cursor="Hand" MouseDown="Delete_excel_btn_Click" Grid.Column="2">
+            <Label Content="Accounts Settings :" Padding="10 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+               FontSize="28" FontWeight="Bold" VerticalContentAlignment="Center"/>
+
+            <Button x:Name="Add_new_user" Grid.Column="1" Padding="10 0" Margin="0,0,18,0" ToolTip="Add new tool to database" materialDesign:ButtonAssist.CornerRadius="0"
+                    HorizontalAlignment="Right"  Style="{StaticResource MaterialDesignFlatDarkBgButton}"  materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                    Click="Add_new_user_Click" Height="36">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Viewbox Width="48" Height="48">
-                        <Canvas Width="24" Height="24">
-                            <Path Fill="{StaticResource Failed-red-Color}" Data="M17 4V6H3V4H6.5L7.5 3H12.5L13.5 4H17M4 19V7H16V19C16 20.1 15.1 21 14 21H6C4.9 21 4 20.1 4 19M19 15H21V17H19V15M19 7H21V13H19V7Z" />
-                        </Canvas>
-                    </Viewbox>
-                    <TextBlock Text="Delete all the data of this Application" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
-                               FontWeight="SemiBold" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Failed-red-Color}"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Canvas Width="24" Height="24">
+                        <Path Fill="White" Data="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M6,10V7H4V10H1V12H4V15H6V12H9V10M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12Z" />
+                    </Canvas>
+                    <TextBlock Text="Add User" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White"/>
                 </Grid>
-            </Border>
+            </Button>
+
         </Grid>
-
-        <Label Grid.Row="2" Content="Accounts Settings :" Padding="10 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-               Background="White" FontSize="28" FontWeight="Bold" VerticalContentAlignment="Center"/>
+        
         <!-- USERS SETTINGS -->
         <Grid Grid.Row="3" Margin="10">
-            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!-- Table Header-->
+            <Border Style="{StaticResource Table-Header-style}" Margin="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="User Name" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                    <TextBlock Grid.Column="1" Text="Full Name" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                    <TextBlock Grid.Column="2" Text="Created Date" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                    <TextBlock Grid.Column="3" Text="Privileges" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                    <TextBlock Grid.Column="4" Text="Last Time Connected" Style="{StaticResource Table-Header-textBlock}" Foreground="{StaticResource Label-Gray-Color}"/>
+                </Grid>
+            </Border>
+
+            <!-- Table Rows-->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                <StackPanel x:Name="users_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" MinHeight="40">
+                    <Label Content="We can't find any user" HorizontalAlignment="Center" FontSize="18" />
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

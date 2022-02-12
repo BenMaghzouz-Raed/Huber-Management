@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Huber_Management"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-            StartupUri="MainWindow.xaml">
+            StartupUri="Login.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,7 +15,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!--PRIMARY-->
-            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="Transparent"/>
+            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#91A6B1"/>
             <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#778080"/>
 
             <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#005596"/>

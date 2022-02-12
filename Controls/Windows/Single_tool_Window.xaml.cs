@@ -35,6 +35,25 @@ namespace Huber_Management.Controls
             serial_nb_detail.Text = serial_id.ToString();
             if (isExist)
             {
+                // PRIVILEGES SETTINGS
+                if (!MainWindow.Connected_user.canDelete)
+                {
+                    MenuItem_Delete.Visibility = Visibility.Collapsed;
+                }
+                if (!MainWindow.Connected_user.canEdit)
+                {
+                    MenuItem_modify.IsEnabled = false;
+                }
+                if (!MainWindow.Connected_user.canReception)
+                {
+                    Add_reception_tool.IsEnabled = false;
+                }
+                if (!MainWindow.Connected_user.canCheckout)
+                {
+                    Add_output_tool.IsEnabled = false;
+                }
+
+                // INITIALIZEDATA
                 DataTable result = await Task.Run(() => Tools_c.Get_by_serial_id(serial_id, conn));
                 designation_detail.Text = result.Rows[0]["Tool_designation"].ToString();
 
@@ -62,6 +81,17 @@ namespace Huber_Management.Controls
                 {
                     Single_tool_details_page page = new Single_tool_details_page(serial_nb_detail.Text.ToString());
                     Single_tool_section.Content = page;
+                }
+
+                // Defective Quantity
+                DataTable defective_data = new DataTable();
+                string query2 = "Select SUM(Faulty_quantity) as quantity FROM Faulty_Tools WHERE (Faulty_Tools.Tool_serial_id = '" + serial_id + "') AND Faulty_quantity > 0 Group By (Faulty_Tools.Tool_serial_id) ";
+                SqlDataAdapter adapter2 = await Task.Run(() => new SqlDataAdapter(query2, conn));
+                adapter2.Fill(defective_data);
+
+                if (defective_data.Rows.Count > 0)
+                {
+                    defective_detail.Text = defective_data.Rows[0]["quantity"].ToString();
                 }
 
             }

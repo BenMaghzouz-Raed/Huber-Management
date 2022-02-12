@@ -3,63 +3,138 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Huber_Management.Pages" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-      mc:Ignorable="d" 
+      xmlns:local="clr-namespace:Huber_Management.Pages" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+      xmlns:controls="clr-namespace:Huber_Management.Controls"
+      mc:Ignorable="d"  
+      Loaded="Load"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="History_page">
-    <Page.Resources>
-        <Style TargetType="lvc:Separator">
-            <Setter Property="StrokeThickness" Value="1"></Setter>
-            <Setter Property="Stroke" Value="#4BFFFFFF"></Setter>
-            <Style.Triggers>
-                <Trigger Property="AxisOrientation" Value="X">
-                    <Setter Property="IsEnabled" Value="False"></Setter>
-                    <Setter Property="Step" Value="1"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Page.Resources>
-
-    <Grid Background="White">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="57"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel>
-            
-        </StackPanel>
 
-        <Grid Grid.Row="1">
+        <!--#region BUTTONS AND FILTERS -->
+        <Grid Margin="0,0,0,3" Background="White">
+            <!-- SEARCH AND FILTERS-->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
-            <!--#region OUTPUTS PER MONTH -->
-            <Border Grid.Column="0" Margin="10 10 0 0">
-                <lvc:CartesianChart Name="outputschart" Series="{Binding SeriesCollectionOutput}" Background="{StaticResource Soft-red-Color}" LegendLocation="None" Padding="5 0">
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis MinValue="0" Labels="{Binding LabelsOutput}"></lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis LabelFormatter="{Binding FormatterOutput}" Foreground="{StaticResource Failed-red-Color}"></lvc:Axis>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-            </Border>
-            <!--#endregion-->
 
-            <!--#region INPUTS PER MONTH-->
-            <Border Grid.Column="1"  Margin="10 10 0 0">
-                <lvc:CartesianChart Name="inputschart" Series="{Binding SeriesCollectionInputs}" Background="{StaticResource Soft-green-Color}" LegendLocation="None" Padding="5 0"> 
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis MinValue="0" Labels="{Binding LabelsInput}"></lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis LabelFormatter="{Binding FormatterInputs}"  Foreground="{StaticResource Success-green-Color}"></lvc:Axis>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-            </Border>
-            <!--#endregion-->
+            <!--SEARCH BAR-->
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="Nav_search_box" Style="{DynamicResource searchTextBox}" materialDesign:HintAssist.Hint="Search by ..." TextWrapping="NoWrap"
+                         Margin="10 0 0 0" MinWidth="150" materialDesign:TextFieldAssist.HasClearButton="True" TextChanged="InitializeAllData_Filters"
+                         Padding="10 5" materialDesign:TextFieldAssist.HasLeadingIcon="True" 
+                         HorizontalContentAlignment="Stretch"  materialDesign:TextFieldAssist.LeadingIcon="Search" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource Dark-main-Blue-Color}"/>
+
+                <!--materialDesign:ColorZoneAssist.Mode="PrimaryLight"-->
+                <ComboBox x:Name="search_filter" Grid.Column="1" BorderThickness="2 0 0 0"
+                            MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}"           
+                            BorderBrush="{DynamicResource MaterialDesignDivider}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}"
+                            HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+
+                    <ComboBoxItem Content="Serial Number" IsSelected="True"/>
+                    <ComboBoxItem Content="Drawing"/>
+                    <ComboBoxItem Content="Supplier"/>
+                    <ComboBoxItem Content="Position"/>
+                </ComboBox>
+            </Grid>
+
+            <!-- Filters -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- WHEN -->
+                <Label Content="When:" FontSize="14" FontWeight="Normal" Foreground="{StaticResource Label-Gray-Color}" Margin="0 0 2 0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="when_combobox" Style="{StaticResource MaterialDesignOutlinedComboBox}" Background="Transparent"
+                          Foreground="{StaticResource Label-Gray-Color}" BorderBrush="{StaticResource Label-Gray-Color}" MinWidth="110" Height="35" Padding="10 0"
+                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+
+                    <ComboBoxItem Content="This Month" IsSelected="True"/>
+                    <ComboBoxItem Content="Last Month"/>
+                    <ComboBoxItem Content="This Year"/>
+                    <ComboBoxItem Content="Last Year"/>
+                    <ComboBoxItem Content="All"/>
+                </ComboBox>
+
+                <!-- BY WHO -->
+                <Label Content="Who:" FontSize="14" FontWeight="Normal" Foreground="{StaticResource Label-Gray-Color}" Margin="15 0 2 0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="by_who_combobox" Style="{StaticResource MaterialDesignOutlinedComboBox}" Background="Transparent"
+                          Foreground="{StaticResource Label-Gray-Color}" BorderBrush="{StaticResource Label-Gray-Color}" MinWidth="80" Height="35" Padding="10 0"
+                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+
+                    <ComboBoxItem Content="Any" IsSelected="True"/>
+                </ComboBox>
+
+                <!-- REFRESH -->
+                <!--<Border Width="22" Height="22" MouseDown="Viewbox_MouseDown" Cursor="Hand" Margin="15,0,0,0" ToolTip="Reload the page">
+                    <Canvas Width="24" Height="24">
+                        <Path Fill="{StaticResource Label-Gray-Color}" Data="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M18 11H13L14.81 9.19A3.94 3.94 0 0 0 12 8A4 4 0 1 0 15.86 13H17.91A6 6 0 1 1 12 6A5.91 5.91 0 0 1 16.22 7.78L18 6Z" />
+                    </Canvas>
+                </Border>-->
+            </StackPanel>
         </Grid>
+        <!--#endregion-->
+
+        <!--#region TABLE DATA-->
+        <Grid Grid.Row="1" Margin="10,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- Table Header-->
+            <Border Style="{StaticResource Table-Header-style}" Background="{StaticResource Label-Gray-Color}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <controls:TableHeader_RadioBtn x:Name="date" Grid.Column="0" Tag="Date" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <Label Grid.Column="1" Content="#" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="serial_id" Grid.Column="2" Tag="Serial NB" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="history_type" Grid.Column="3" Tag="Type" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="quantity" Grid.Column="4" Tag="Quantity" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="requester" Grid.Column="5" Tag="Requester" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="supplier" Grid.Column="6" Tag="Supplier" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="price" Grid.Column="7" Tag="Price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="total_price" Grid.Column="8" Tag="Total price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white" />
+                    <Label Grid.Column="9" Content="By" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+                    <Label Grid.Column="10" Content="Comment" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+
+                </Grid>
+            </Border>
+
+            <!-- Table Rows-->
+            <ScrollViewer  x:Name="DataScrollViewer" VerticalScrollBarVisibility="Visible" Grid.Row="1" Visibility="Collapsed">
+                <StackPanel x:Name="History_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" />
+            </ScrollViewer>
+
+            <!-- Loading Icon -->
+            <ScrollViewer x:Name="LoadingIcon" VerticalScrollBarVisibility="Visible" Grid.Row="1" Visibility="Visible">
+                <TextBlock Text="Loading ..." HorizontalAlignment="Center" Margin="30" FontSize="24" FontWeight="DemiBold"/>
+            </ScrollViewer>
+        </Grid>
+        <!--#endregion-->
+
+
     </Grid>
 </Page>

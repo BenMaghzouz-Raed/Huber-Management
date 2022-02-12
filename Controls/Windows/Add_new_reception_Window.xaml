@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
         xmlns:local="clr-namespace:Huber_Management.Controls"
         mc:Ignorable="d"
-        Title="Add a Reception" Height="400" Width="500" 
+        Title="New Reception" Height="400" Width="500" 
         Background="{DynamicResource MaterialDesignPaper}"
         ResizeMode="NoResize"
         Topmost="True"

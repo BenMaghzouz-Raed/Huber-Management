@@ -25,6 +25,13 @@ namespace Huber_Management.Pages
         {
             InitializeComponent();
         }
+        void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            SqlConnection conn = Database_c.Get_DB_Connection();
+            InitializeUsers(conn);
+            InitializeSettings(conn);
+            Database_c.Close_DB_Connection();
+        }
 
         /// <summary>
         /// Import Data Base
@@ -62,22 +69,25 @@ namespace Huber_Management.Pages
                         decimal.TryParse(Row[16].ToString(), out price);
 
                         int actual_stock = 1;
-                        int.TryParse(Row[12].ToString(), out actual_stock);
+                        int.TryParse(Row[11].ToString(), out actual_stock);
 
                         int min_stock = 0;
                         int.TryParse(Row[10].ToString(), out min_stock);
 
                         int max_stock = 0;
-                        int.TryParse(Row[11].ToString(), out min_stock);
+                        //int.TryParse(Row[11].ToString(), out min_stock);
 
                         string tool_serial_id = string.Join(" ", Row[2].ToString().Split().Where(x => x != ""));
                         string tool_supplier = string.Join(" ", Row[0].ToString().Split().Where(x => x != ""));
 
+                        int criticality = 0;
+                        int.TryParse(Row[22].ToString(), out criticality);
+
                         Tools_c NewTool = new Tools_c
                         {
                             Tool_serial_id = tool_serial_id,
-                            Tool_supplier = tool_supplier.ToUpper(),
                             Tool_supplier_code = string.Join(" ", Row[1].ToString().Split().Where(x => x != "")),
+                            Tool_supplier = tool_supplier.ToUpper(),
 
                             Tool_image_path = "",
 
@@ -92,6 +102,7 @@ namespace Huber_Management.Pages
                             Tool_stock_max = max_stock,
                             Tool_actual_stock = actual_stock,
                             Tool_price = price,
+                            Tool_criticality = criticality,
 
                         };
                         bool Tool_isAdded = await Task.Run(() => Tools_c.Add_single_tool(NewTool, conn));
@@ -128,7 +139,7 @@ namespace Huber_Management.Pages
                                 Transaction_quantity = quantity_reception,
                                 Transaction_tool_serial_id = Transaction_serial_id,
                                 Transaction_by = string.Join(" ", Row[2].ToString().Split().Where(x => x != "")),
-                                Transaction_comment = string.Join(" ", Row[11].ToString().Split().Where(x => x != "")),
+                                Transaction_comment = string.Join(" ", Row[13].ToString().Split().Where(x => x != "")),
                                 Transaction_date = Row[1].ToString()
                             };
                             reception_isAdded = await Task.Run(() => Transactions_c.Add_single_Transaction(newReception, conn));
@@ -144,9 +155,9 @@ namespace Huber_Management.Pages
                                 Transaction_type = "OUT",
                                 Transaction_quantity = quantity_output,
                                 Transaction_tool_serial_id = Transaction_serial_id,
-                                Transaction_req_prov = string.Join(" ", Row[10].ToString().Split().Where(x => x != "")),
+                                Transaction_req_prov = string.Join(" ", Row[12].ToString().Split().Where(x => x != "")),
                                 Transaction_by = string.Join(" ", Row[2].ToString().Split().Where(x => x != "")),
-                                Transaction_comment = string.Join(" ", Row[11].ToString().Split().Where(x => x != "")),
+                                Transaction_comment = string.Join(" ", Row[13].ToString().Split().Where(x => x != "")),
                                 Transaction_date = Row[1].ToString()
                             };
                             output_isAdded = await Task.Run(() => Transactions_c.Add_single_Transaction(newOutput, conn));
@@ -160,14 +171,14 @@ namespace Huber_Management.Pages
                         if(!Tools_c.isExist_serial_id(Transaction_serial_id, conn))
                         {
                             decimal price = 0;
-                            decimal.TryParse(Row[7].ToString(), out price);
+                            decimal.TryParse(Row[8].ToString(), out price);
                             Tools_c NewTool = new Tools_c
                             {
                                 Tool_serial_id = string.Join(" ", Row[3].ToString().Split().Where(x => x != "")),
                                 Tool_designation = string.Join(" ", Row[4].ToString().Split().Where(x => x != "")),
                                 Tool_price = price,
-                                Tool_project = string.Join(" ", Row[12].ToString().Split().Where(x => x != "")),
-                                Tool_division = string.Join(" ", Row[13].ToString().Split().Where(x => x != "")),
+                                Tool_project = string.Join(" ", Row[14].ToString().Split().Where(x => x != "")),
+                                Tool_division = string.Join(" ", Row[15].ToString().Split().Where(x => x != "")),
                             };
                             bool Tool_isAdded = await Task.Run(() => Tools_c.Add_single_tool(NewTool, conn));
                             if (Tool_isAdded) 
@@ -286,6 +297,122 @@ namespace Huber_Management.Pages
             {
                 return;
             }
+        }
+    
+        private void InitializeUsers(SqlConnection conn)
+        {
+            DataTable UsersTable = new DataTable();
+            users_rows_panel.Children.Clear();
+            string query = "SELECT * FROM Users ";
+
+            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            adapter.Fill(UsersTable);
+
+            foreach (DataRow row in UsersTable.Rows)
+            {
+                try
+                {
+                    users_c newUser = new users_c
+                    {
+                        user_name = row["User_name"].ToString(),
+                        user_fullName = row["User_fullname"].ToString(),
+                        last_login = row["Last_login"].ToString(),
+                        IsAdmin = bool.Parse(row["IsAdmin"].ToString()),
+                        user_added_date = row["User_added_date"].ToString(),
+                        privileges_id = row["Privileges_id"].ToString(),
+                        isConnected = bool.Parse(row["isConnected"].ToString()),
+                    };
+
+                    users_rows_panel.Children.Add(new Controls.User_Account_Row(newUser));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void InitializeSettings(SqlConnection conn)
+        {
+            DataTable SettingsTable = new DataTable();
+            string query = "SELECT * FROM App_settings WHERE isDefault = 1 ";
+            try
+            {
+                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                adapter.Fill(SettingsTable);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            if(SettingsTable.Rows.Count > 0)
+            {
+                price_convert_value.Text = SettingsTable.Rows[0]["Euro_to_dt_value"].ToString();
+                criticality_a.Text = SettingsTable.Rows[0]["Criticality_A_value"].ToString();
+                criticality_b.Text = SettingsTable.Rows[0]["Criticality_B_value"].ToString();
+                criticality_c.Text = SettingsTable.Rows[0]["Criticality_C_value"].ToString();
+            }
+        }
+
+        private void Add_new_user_Click(object sender, RoutedEventArgs e)
+        {
+            Controls.Add_user_window new_user = new Controls.Add_user_window();
+            new_user.Show();
+            return;
+        }
+
+        private void Edit_settings_Click(object sender, RoutedEventArgs e)
+        {
+            Save_changes.Visibility = Visibility.Visible;
+            Edit_settings.Visibility = Visibility.Collapsed;
+            price_convert_value.IsEnabled = true;
+            criticality_a.IsEnabled = true;
+            criticality_b.IsEnabled = true;
+            criticality_c.IsEnabled = true;
+        }
+
+        private void Save_changes_Click(object sender, RoutedEventArgs e)
+        {
+
+            SqlConnection conn = Database_c.Get_DB_Connection();
+
+            decimal Euro_to_dt_value;
+            decimal.TryParse(price_convert_value.Text.ToString(), out Euro_to_dt_value);
+
+            int Criticality_A_value;
+            int.TryParse(criticality_a.Text.ToString(), out Criticality_A_value);
+
+            int Criticality_B_value;
+            int.TryParse(criticality_b.Text.ToString(), out Criticality_B_value);
+
+            int Criticality_C_value;
+            int.TryParse(criticality_c.Text.ToString(), out Criticality_C_value);
+
+            App_settings_c update_settings = new App_settings_c
+            {
+                Euro_to_dt_value = Euro_to_dt_value,
+                Criticality_A_value = Criticality_A_value,
+                Criticality_B_value = Criticality_B_value,
+                Criticality_C_value = Criticality_C_value
+            };
+
+            MainWindow.Default_settings = update_settings;
+
+            bool Updated = App_settings_c.updateDefaultSettings(conn, update_settings);
+
+            if (Updated)
+            {
+                Edit_settings.Visibility = Visibility.Visible;
+                Save_changes.Visibility = Visibility.Collapsed;
+                price_convert_value.IsEnabled = false;
+                criticality_a.IsEnabled = false;
+                criticality_b.IsEnabled = false;
+                criticality_c.IsEnabled = false;
+            }
+
+            Database_c.Close_DB_Connection();
+
         }
     }
 }

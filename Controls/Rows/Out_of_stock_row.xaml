@@ -75,9 +75,9 @@
             <Label x:Name="tools_row_needed_quantity" Grid.Column="4" Content="3" FontWeight="DemiBold"/>
             <Label x:Name="tools_row_total_nq" Grid.Column="5" Content="675.500 DT" FontWeight="DemiBold"/>
             <Label x:Name="tools_row_supplier" Grid.Column="6" Content="H+S" Foreground="{StaticResource Label-Gray-Color}"/>
-            <TextBox x:Name="tool_criticality" Grid.Column="7" Text="A" BorderThickness="1" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" 
-                       Background="{StaticResource Soft-red-Color}" Width="40" TextAlignment="Center" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"
-                     Foreground="{StaticResource Failed-red-Color}" FontSize="16" Focusable="False" BorderBrush="{StaticResource Failed-red-Color}"/>
+            <TextBox x:Name="tool_criticality" Grid.Column="7" Text="A" BorderThickness="0" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" 
+                       Background="{StaticResource Failed-red-Color}" Width="40" TextAlignment="Center" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"
+                     Foreground="White" FontSize="18" Focusable="False"/>
             <CheckBox x:Name="checkbox" HorizontalAlignment="Center" Grid.Column="8" Checked="checkbox_Checked" Unchecked="checkbox_Unchecked" />
 
         </Grid>

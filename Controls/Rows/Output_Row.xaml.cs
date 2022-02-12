@@ -49,19 +49,27 @@ namespace Huber_Management.Controls
             decimal price = 0;
             decimal.TryParse(Tool.Tool_price.ToString(), out price);
             string price_c = price.ToString("C").Remove(0, 1);
-            string price_dt_c = (price * 3).ToString("C").Remove(0, 1);
-            tools_row_price.Content = price_c;
+
+            decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+
+            string price_dt_c = (price * dt_value).ToString("C").Remove(0, 1);
+            tools_row_price.Content = price_c + " €";
             tools_row_price.ToolTip = price_dt_c + " DT";
 
             decimal total_price = (decimal)(price * (int)Output.Transaction_quantity);
             string total_price_c = total_price.ToString("C").Remove(0, 1);
-            string total_price_dt_c = (total_price * 3).ToString("C").Remove(0, 1);
-            tools_row_total.Content = total_price_c;
+            string total_price_dt_c = (total_price * dt_value).ToString("C").Remove(0, 1);
+            tools_row_total.Content = total_price_c + " €";
             tools_row_total.ToolTip = total_price_dt_c + " DT";
 
 
             output_by.Text = Output.Transaction_by;
 
+            // PRIVILEGES SETTINGS
+            if (!MainWindow.Connected_user.canDelete)
+            {
+                MenuItem_Delete.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void Tool_row_element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

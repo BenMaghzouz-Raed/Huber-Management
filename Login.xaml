@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="Login" Height="560" Width="450"
         WindowStartupLocation="CenterScreen" 
-        ShowInTaskbar="False" Icon="{StaticResource Huber_small_icon}" 
+        Icon="{StaticResource Huber_small_icon}" 
         ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}">
@@ -27,48 +27,51 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <!-- Page Title-->
         <StackPanel>
-            <Ellipse Height="80" Width="80" Margin="0 10">
+            <Ellipse Height="80" Width="80" Margin="0 10 0 0">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="{StaticResource Huber_small_icon}" Stretch="Uniform"/>
+                    <ImageBrush ImageSource="{StaticResource Huber_rounded_icon}" Stretch="Uniform"/>
                 </Ellipse.Fill>
             </Ellipse>
 
             <TextBlock HorizontalAlignment="Center" FontSize="28" FontWeight="Bold" Text="Welcome !" />
 
-            <TextBlock FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center" Text="Log in to your existing account"></TextBlock>
+            <TextBlock FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center" Text="Log in to your Tools Management account"></TextBlock>
 
         </StackPanel>
         
 
         <!-- Login INPUTS-->
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 20 0 0">
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 0">
             
             <!-- User Name -->
-            <TextBox x:Name="user_name" Height="64" Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="300" materialDesign:TextFieldAssist.LeadingIconSize="25"
-                     materialDesign:HintAssist.Hint="Enter Username" BorderThickness="2"  materialDesign:TextFieldAssist.HasLeadingIcon="True"
+            <TextBox x:Name="user_name" Text="admin2" Height="64" Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="300" materialDesign:TextFieldAssist.LeadingIconSize="25"
+                     materialDesign:HintAssist.Hint="Enter Username" BorderThickness="1"  materialDesign:TextFieldAssist.HasLeadingIcon="True"
                      BorderBrush="{DynamicResource MaterialDesignDivider}" FontSize="20" materialDesign:TextFieldAssist.LeadingIcon="User"
                     />
             
             <!-- Password -->
-            <PasswordBox x:Name="password" Height="64" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Width="300"
-                     materialDesign:HintAssist.Hint="Enter Password" BorderThickness="2" Margin="0 20 0 0"
+            <PasswordBox x:Name="password" Password="admin2" Height="64" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Width="300"
+                     materialDesign:HintAssist.Hint="Enter Password" BorderThickness="1" Margin="0 20 0 0" 
                      BorderBrush="{DynamicResource MaterialDesignDivider}" FontSize="20" 
                     />
 
             <!-- Login Button -->
             <Button x:Name="Login_btn" Height="60" Content="LOG IN" Margin="0 20 0 0" Width="300" Style="{StaticResource MaterialDesignFlatMidBgButton}"
-                    Click="Login_btn_Click" materialDesign:ButtonAssist.CornerRadius="10"
+                    Click="Login_btn_Click" materialDesign:ButtonAssist.CornerRadius="8"
                     FontSize="28" FontWeight="Bold" materialDesign:ShadowAssist.ShadowDepth="Depth1"/>
 
-            <Button Margin="0,10,0,0" x:Name="signupBtn" Style="{StaticResource MaterialDesignFlatButton}" materialDesign:ShadowAssist.ShadowDepth="Depth0" Height="53"
-                    Width="300" materialDesign:ButtonAssist.CornerRadius="10" FontSize="18" Content="Forget password?" />
+            <!--<Button Margin="0,10,0,0" x:Name="signupBtn" Style="{StaticResource MaterialDesignFlatButton}" materialDesign:ShadowAssist.ShadowDepth="Depth0" Height="53"
+                    Width="300" materialDesign:ButtonAssist.CornerRadius="10" FontSize="18" Content="Forget password?" />-->
 
         </StackPanel>
-       
+
+        <Label Grid.Row="2" Content="Created By Saif Eddine Hamdi © 2022" HorizontalAlignment="Center" 
+               FontSize="14" Foreground="{StaticResource Grey-Blue-Color}"/>
 
     </Grid>
 </Window>

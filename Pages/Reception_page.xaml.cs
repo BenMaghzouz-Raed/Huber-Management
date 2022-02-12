@@ -20,10 +20,32 @@ namespace Huber_Management.Pages
         public Reception_page()
         {
             InitializeComponent();
-
         }
         void Load(object sender, RoutedEventArgs e)
-        {
+        {   
+            // PRIVILEGES SETTINGS
+            if (!MainWindow.Connected_user.canReception)
+            {
+                Add_reception_tool.IsEnabled = false;
+            }
+
+            // INITIALIZE BY WHO COMBOBOX
+            SqlConnection conn = Database_c.Get_DB_Connection();
+            DataTable by_who_table = new DataTable();
+            string query = "SELECT DISTINCT(Transaction_by) as results FROM Transactions";
+            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            adapter.Fill(by_who_table);
+            foreach (DataRow row in by_who_table.Rows)
+            {
+                if (row["results"].ToString() != "")
+                {
+                    ComboBoxItem newItem = new ComboBoxItem();
+                    newItem.Content = row["results"].ToString();
+                    by_who_combobox.Items.Add(newItem);
+                }
+            }
+            Database_c.Close_DB_Connection();
+
             date.tableHeader_Label.Content = date.Tag.ToString();
             serial_id.tableHeader_Label.Content = serial_id.Tag.ToString();
             quantity.tableHeader_Label.Content = quantity.Tag.ToString();
@@ -47,10 +69,9 @@ namespace Huber_Management.Pages
 
             InitializeAllData();
         }
-        public Controls.TableHeader_RadioBtn Selected_sort_by { get; set; } = null;
+        private Controls.TableHeader_RadioBtn Selected_sort_by { get; set; } = null;
 
-
-        public async void InitializeAllData(string filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
+        public async void InitializeAllData(string when = "", string who = "", string filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
         {
             if (LoadingIcon != null && DataScrollViewer != null)
             {
@@ -62,35 +83,63 @@ namespace Huber_Management.Pages
             DataTable all_data = new DataTable();
 
             string query = "Select * FROM Transactions LEFT JOIN Tools ON (Transaction_tool_serial_id = Tool_serial_id) WHERE (Transaction_type = 'IN') ";
-
+            
             // FILTER CONVERTER
             switch (filter)
             {
-                case "Added Date":
-                    filter = "";
+                case "Serial Number":
+                    filter = "Transaction_tool_serial_id";
                     break;
-                case "A-Z":
-                    filter = "";
+                case "Drawing":
+                    filter = "Tool_drawing";
                     break;
-                case "Actual Stock":
-                    filter = "";
+                case "Supplier":
+                    filter = "Tool_supplier";
+                    break;
+                case "Position":
+                    filter = "Tool_position";
                     break;
                 default:
-                    query += "";
+                    filter = "Tool_serial_id";
                     break;
             }
+
             // SEARCH CONVERTER
-            if (_search_text != "" && _search_text != "Search by ID or Name..." && _search_text.Length > 0)
+            if (_search_text != "" && _search_text.Length > 0)
             {
-                if (filter == "")
-                {
-                    query += "AND Transaction_tool_serial_id LIKE '%" + _search_text + "%' ";
-                }
-                else
-                {
-                    query += "AND Transaction_tool_serial_id LIKE '%" + _search_text + "%' ";
-                }
+                query += " AND " + filter + " LIKE '%" + _search_text + "%' ";
             }
+
+            // WHEN CONVERTER
+            switch (when)
+            {
+                case "This Month":
+                    when = " AND ( MONTH(Transaction_date)=MONTH(GETDATE()) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    break;
+                case "Last Month":
+                    when = " AND ( MONTH(Transaction_date)<=( MONTH(GETDATE()) - 1 ) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    break;
+                case "Last Year":
+                    when = " AND ( YEAR(Transaction_date)= (YEAR(GETDATE()) - 1) ) ";
+                    break;
+                case "This Year":
+                    when = " AND ( YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    break;
+                case "All":
+                    when = "";
+                    break;
+                default:
+                    when = " AND ( MONTH(Transaction_date)=MONTH(GETDATE()) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    break;
+            }
+            query += when;
+
+            // BY WHO CONVERTER
+            if(who != "Any" && who != "")
+            {
+                query += " AND (Transaction_by = '" + who + "' ) ";
+            }
+
             // SORT BY CONVERTER
             switch (sort_by)
             {
@@ -136,7 +185,7 @@ namespace Huber_Management.Pages
             {
                 MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            if (Reception_rows_panel != null)
+            if (Reception_rows_panel != null && all_data.Rows.Count > 0)
             {
                 Reception_rows_panel.Children.Clear();
                 foreach (DataRow row in all_data.Rows)
@@ -159,7 +208,7 @@ namespace Huber_Management.Pages
                         Tool_image_path = (string)row["Tool_image_path"]
                     };
 
-                    Transactions_c output = new Transactions_c
+                    Transactions_c reception = new Transactions_c
                     {
                         Transaction_id = row["Transaction_id"].ToString(),
                         Transaction_tool_serial_id = row["Transaction_tool_serial_id"].ToString(),
@@ -169,9 +218,14 @@ namespace Huber_Management.Pages
                         Transaction_by = row["Transaction_by"].ToString(),
                         Transaction_comment = row["Transaction_comment"].ToString(),
                     };
-                    Reception_rows_panel.Children.Add(new Controls.Reception_Row(output, newTool));
+                    Reception_rows_panel.Children.Add(new Controls.Reception_Row(reception, newTool));
                 }
 
+            }
+            else
+            {
+                Reception_rows_panel.Children.Clear();
+                Reception_rows_panel.Children.Add(this.noDataFound);
             }
 
             Database_c.Close_DB_Connection();
@@ -184,23 +238,23 @@ namespace Huber_Management.Pages
 
         }
 
-
-        private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if(this.NavigationService != null)
-            {
-                this.NavigationService.Refresh();
-            }
-        }
-
+        //private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    if(this.NavigationService != null)
+        //    {
+        //        this.NavigationService.Refresh();
+        //    }
+        //}
 
         public void InitializeAllData_Filters(object sender, EventArgs e)
         {
-            if (filter_combobox != null && Nav_search_box != null)
+            if (search_filter != null && Nav_search_box != null && when_combobox != null && by_who_combobox != null)
             {
                 try
                 {
-                    string _filter = ((ComboBoxItem)filter_combobox.SelectedItem).Content.ToString();
+                    string _when = ((ComboBoxItem)when_combobox.SelectedItem).Content.ToString();
+                    string _who = ((ComboBoxItem)by_who_combobox.SelectedItem).Content.ToString();
+                    string _filter = ((ComboBoxItem)search_filter.SelectedItem).Content.ToString();
                     string _text = ((TextBox)Nav_search_box).Text.ToString();
 
                     if (Selected_sort_by != null)
@@ -208,11 +262,11 @@ namespace Huber_Management.Pages
                         bool DSEC = Selected_sort_by.RadioBtn_invisible_Down.IsChecked.Value;
 
                         string _sort_by = Selected_sort_by.Name.ToString();
-                        InitializeAllData(_filter, _sort_by, DSEC, _text);
+                        InitializeAllData(_when, _who, _filter, _sort_by, DSEC, _text);
                     }
                     else
                     {
-                        InitializeAllData(_filter, "", true, _text);
+                        InitializeAllData(_when, _who, _filter, "", true, _text);
                     }
                 }
                 catch (Exception ex)
@@ -220,6 +274,7 @@ namespace Huber_Management.Pages
                     MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
         }
 
         private void sort_by_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -233,5 +288,6 @@ namespace Huber_Management.Pages
             Controls.Add_new_reception_Window new_reception = new Controls.Add_new_reception_Window();
             new_reception.Show();
         }
+
     }
 }

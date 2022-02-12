@@ -32,6 +32,11 @@ namespace Huber_Management.Controls
             new_search_page = new search_page(serial_nb_detail);
             Add_reception_container.Content = new_search_page;
             hide_add_new_page();
+            // PRIVILEGES SETTINGS
+            if (!MainWindow.Connected_user.canAdd)
+            {
+                Add_new_tool.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void hide_search_page()

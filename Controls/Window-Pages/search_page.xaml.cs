@@ -37,8 +37,10 @@ namespace Huber_Management.Controls
                                 result.Rows[0]["Tool_designation"].ToString(), true)
                     );
                 searched_result.Visibility = Visibility.Visible;
-                Database_c.Close_DB_Connection();
             }
+
+            Database_c.Close_DB_Connection();
+
         }
 
         private async void search_for_tools_to_add_TextChanged(object sender, TextChangedEventArgs e)
@@ -70,8 +72,8 @@ namespace Huber_Management.Controls
                 {
                     searched_result.Visibility = Visibility.Collapsed;
                 }
-
             }
+
         }
 
     }

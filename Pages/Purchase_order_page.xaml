@@ -20,20 +20,37 @@
         <Grid Margin="0,0,0,3" Background="White">
             <!-- SEARCH AND FILTERS-->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
+            
             <!--SEARCH BAR-->
-
-            <TextBox x:Name="Nav_search_box" HorizontalAlignment="Stretch" materialDesign:HintAssist.Hint="Search by id ..."  TextWrapping="NoWrap"
-                         VerticalAlignment="Center" Margin="10,0" Height="36" FontSize="16" MinWidth="150" materialDesign:TextFieldAssist.HasClearButton="True"
-                         BorderThickness="0" FontFamily="Segoe UI" TextAlignment="Left" Foreground="{StaticResource Label-Gray-Color}" TextChanged="InitializeAllData_Filters"
-                         Background="{StaticResource Screen-bg-Color}" Padding="10 5" VerticalContentAlignment="Center" materialDesign:TextFieldAssist.HasLeadingIcon="True"
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="Nav_search_box" Style="{DynamicResource searchTextBox}" materialDesign:HintAssist.Hint="Search by ..." TextWrapping="NoWrap"
+                         Margin="10 0 0 0" MinWidth="150" materialDesign:TextFieldAssist.HasClearButton="True" TextChanged="InitializeAllData_Filters"
+                         Padding="10 5" materialDesign:TextFieldAssist.HasLeadingIcon="True" 
                          HorizontalContentAlignment="Stretch"  materialDesign:TextFieldAssist.LeadingIcon="Search" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource Dark-main-Blue-Color}"/>
 
+                <ComboBox x:Name="search_filter" Grid.Column="1" BorderThickness="2 0 0 0"
+                            materialDesign:ColorZoneAssist.Mode="PrimaryLight" MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}"           
+                            BorderBrush="{DynamicResource MaterialDesignDivider}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}"
+                            HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+
+                    <ComboBoxItem Content="Serial Number" IsSelected="True"/>
+                    <ComboBoxItem Content="Drawing"/>
+                    <ComboBoxItem Content="Supplier"/>
+                    <ComboBoxItem Content="Position"/>
+                </ComboBox>
+            </Grid>
+
             <!-- Filters -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <StackPanel Grid.Column="1" Visibility="Collapsed" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch">
                 <!-- FILTER -->
                 <Label Content="Filter:" FontSize="16" FontWeight="DemiBold" Foreground="{StaticResource Label-Gray-Color}" Margin="0 0 5 0" VerticalAlignment="Center"/>
                 <ComboBox x:Name="filter_combobox" Style="{StaticResource MaterialDesignComboBox}" Background="{StaticResource Screen-bg-Color}"
@@ -66,7 +83,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Canvas Width="24" Height="24" Grid.Column="0">
-                        <Path Fill="White" Data="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+                        <Path Fill="White" Data="{DynamicResource Purchase_order}" />
                     </Canvas>
                     <TextBlock Text="Purchase" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White"/>
                 </Grid>
@@ -103,7 +120,7 @@
                     <controls:TableHeader_RadioBtn x:Name="needed_quantity" Grid.Column="4" Tag="Needed quantity" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
                     <controls:TableHeader_RadioBtn x:Name="total_nq" Grid.Column="5" Tag="Total (N.Q)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
                     <controls:TableHeader_RadioBtn x:Name="supplier" Grid.Column="6" Tag="Supplier" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
-                    <Label Content="Criticality" Grid.Column="7" Style="{StaticResource Table-Header-label}"/>
+                    <controls:TableHeader_RadioBtn x:Name="criticality" Grid.Column="7" Tag="Criticality" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
                     <CheckBox x:Name="select_all" Cursor="Hand" HorizontalAlignment="Center" Grid.Column="8" Checked="select_all_Checked" Unchecked="select_all_Unchecked" />
 
                 </Grid>
@@ -111,7 +128,9 @@
 
             <!-- Table Rows -->
             <ScrollViewer x:Name="DataScrollViewer" VerticalScrollBarVisibility="Visible" Grid.Row="1" Visibility="Collapsed">
-                <StackPanel x:Name="All_tools_rows_panel" Orientation="Vertical" CanVerticallyScroll="True"/>
+                <StackPanel x:Name="All_tools_rows_panel" Orientation="Vertical" CanVerticallyScroll="True">
+                    <TextBlock x:Name="noDataFound" Text="NO DATA FOUND" HorizontalAlignment="Center" Margin="0 30 0 0" FontSize="32" FontWeight="DemiBold"/>
+                </StackPanel>
             </ScrollViewer>
 
             <!-- Loading Icon -->

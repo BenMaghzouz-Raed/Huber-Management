@@ -16,12 +16,14 @@ using System.Windows;
 namespace Huber_Management{
 
     public static class Database_c{
-        //------------------- Class: DB -------------------
+
+        private static string connection_string { get; } = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\Database\Local-db.mdf;Integrated Security = True";
+
         private static string cn_String
         { 
             get {
                 //string database_path = System.Environment.CurrentDirectory + @"\Database\Local-db.mdf";
-                return (@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\Database\Local-db.mdf;Integrated Security=True");
+                return (connection_string);
             } 
         }
 
@@ -72,5 +74,6 @@ namespace Huber_Management{
             SqlConnection cn_connection = new SqlConnection(cn_String);
             if (cn_connection.State != ConnectionState.Closed) cn_connection.Close();
         }
+
     }
 }

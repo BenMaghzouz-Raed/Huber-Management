@@ -34,11 +34,11 @@ namespace Huber_Management.Controls
         {
             DataTable result = await Task.Run(() => Tools_c.Get_by_serial_id(serial_id, conn));
 
-            drawing.Text = result.Rows[0]["Tool_drawing"].ToString() == "" ? result.Rows[0]["Tool_drawing"].ToString() : "-";
-            project.Text = result.Rows[0]["Tool_project"].ToString() == "" ? result.Rows[0]["Tool_project"].ToString() : "-";
-            process.Text = result.Rows[0]["Tool_process"].ToString() == "" ? result.Rows[0]["Tool_process"].ToString() : "-";
-            division.Text = result.Rows[0]["Tool_division"].ToString() == "" ? result.Rows[0]["Tool_division"].ToString() : "-";
-            position.Text = result.Rows[0]["Tool_position"].ToString() == "" ? result.Rows[0]["Tool_position"].ToString() : "-";
+            drawing.Text = result.Rows[0]["Tool_drawing"].ToString() != "" ? result.Rows[0]["Tool_drawing"].ToString() : "-";
+            project.Text = result.Rows[0]["Tool_project"].ToString() != "" ? result.Rows[0]["Tool_project"].ToString() : "-";
+            process.Text = result.Rows[0]["Tool_process"].ToString() != "" ? result.Rows[0]["Tool_process"].ToString() : "-";
+            division.Text = result.Rows[0]["Tool_division"].ToString() != "" ? result.Rows[0]["Tool_division"].ToString() : "-";
+            position.Text = result.Rows[0]["Tool_position"].ToString() != "" ? result.Rows[0]["Tool_position"].ToString() : "-";
             min.Text = result.Rows[0]["Tool_stock_mini"].ToString();
             max.Text = result.Rows[0]["Tool_stock_max"].ToString();
 
@@ -50,7 +50,8 @@ namespace Huber_Management.Controls
             unit_price.Text = price_c + " €";
 
             // UNIT PRICE EN DT
-            string price_dt_c = (price * 3).ToString("C").Remove(0, 1);
+            decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+            string price_dt_c = (price * dt_value).ToString("C").Remove(0, 1);
             unit_price.ToolTip = price_dt_c + " DT";
 
             // TOTAL PRICE EN EURO
@@ -59,17 +60,47 @@ namespace Huber_Management.Controls
             this.total_price.Text = total_price_c + " €";
 
             // TOTAL PRICE EN DT
-            decimal total_price_dt = (int)result.Rows[0]["Tool_actual_stock"] * price * 3;
+            decimal total_price_dt = (int)result.Rows[0]["Tool_actual_stock"] * price * dt_value;
             string total_price_dt_c = total_price_dt.ToString("C").Remove(0, 1);
             this.total_price.ToolTip = total_price_dt_c + " DT";
 
 
-            supplier.Text = result.Rows[0]["Tool_supplier"].ToString() == "" ? result.Rows[0]["Tool_supplier"].ToString() : "-";
-            supplier_code.Text = result.Rows[0]["Tool_supplier_code"].ToString() == "" ? result.Rows[0]["Tool_supplier_code"].ToString() : "-";
+            supplier.Text = result.Rows[0]["Tool_supplier"].ToString() != "" ? result.Rows[0]["Tool_supplier"].ToString() : "-";
+            supplier_code.Text = result.Rows[0]["Tool_supplier_code"].ToString() != "" ? result.Rows[0]["Tool_supplier_code"].ToString() : "-";
             string[] date = result.Rows[0]["Tool_date_added"].ToString().Split(null);
             string[] time = date[1].Split(":");
             added_date.Text = date[0] + " " + time[0] + ":" + time[1];
 
+            int criticlity = 0;
+            int.TryParse(result.Rows[0]["Tool_criticality"].ToString(), out criticlity);
+            criticality_converter(criticlity);
+
+        }
+
+        public void criticality_converter(int criticality_val)
+        {
+            string converted_value = "A";
+
+            int A_value = MainWindow.Default_settings.Criticality_A_value;
+            int B_value = MainWindow.Default_settings.Criticality_B_value;
+            int C_value = MainWindow.Default_settings.Criticality_C_value;
+            if (criticality_val <= C_value)
+            {
+                tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#005596");
+                converted_value = "C";
+            }
+            else if (criticality_val <= B_value && criticality_val > C_value)
+            {
+                tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#DF781C");
+                converted_value = "B";
+            }
+            else if (criticality_val <= A_value && criticality_val > B_value)
+            {
+                converted_value = "A";
+            }
+
+            tool_criticality.Text = converted_value;
+            tool_criticality.ToolTip = "Lead time = " + criticality_val.ToString() + " Days";
         }
     }
 }

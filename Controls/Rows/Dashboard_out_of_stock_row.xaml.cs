@@ -32,7 +32,9 @@ namespace Huber_Management.Controls
 
             string total_price_c = Total_price_nq.ToString("C").Remove(0, 1);
             tools_row_total_nq.Content = total_price_c + " €";
-            string price_dt_c = (Total_price_nq * 3).ToString("C").Remove(0, 1);
+
+            decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+            string price_dt_c = (Total_price_nq * dt_value).ToString("C").Remove(0, 1);
             tools_row_total_nq.ToolTip = price_dt_c + " DT";
 
             tools_row_supplier.Content = Tool_supplier == "" ? "-" : Tool_supplier;

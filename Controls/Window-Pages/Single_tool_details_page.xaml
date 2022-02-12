@@ -180,7 +180,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Supplier code article :"/>
-                <TextBlock x:Name="supplier_code" Grid.Column="1" Text="0.00 €"/>
+                <TextBlock x:Name="supplier_code" Grid.Column="1" Text="DPR-00353136"/>
             </Grid>
 
             <!-- Criticality -->
@@ -191,7 +191,9 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Criticality:"/>
-                <TextBlock x:Name="criticality" Grid.Column="1" Text="A"/>
+                <TextBox x:Name="tool_criticality" Grid.Column="1" Opacity=".8" Text="A" BorderThickness="0" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" 
+                       Background="{StaticResource Failed-red-Color}" Width="35" TextAlignment="Center" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"
+                     Foreground="White" FontSize="18" Focusable="False"/>
             </Grid>
 
             <!-- Added Date -->

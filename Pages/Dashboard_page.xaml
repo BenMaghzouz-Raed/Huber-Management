@@ -3,7 +3,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
       xmlns:local="clr-namespace:Huber_Management.Pages"
       xmlns:controls="clr-namespace:Huber_Management.Controls"
       mc:Ignorable="d" 
@@ -73,7 +74,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Earnings" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource Success-green-Color}"/>
+                            <TextBlock Text="Total Saving" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource Success-green-Color}"/>
                             <Label x:Name="total_gain" Content="0 €" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
                                    FontSize="32" FontWeight="Bold" Foreground="{StaticResource Success-green-Color}"/>
                         </Grid>
@@ -92,18 +93,7 @@
                 </Grid>
             </Grid>
 
-            <Border Grid.Column="1" Padding="5" Background="White" CornerRadius="10" Margin="10 5 0 5">
-                <StackPanel Orientation="Vertical">
-                    <Label Content="Today Tasks :" HorizontalAlignment="Left"
-                       FontWeight="DemiBold" FontSize="18"/>
-                    <!-- Table Rows-->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel x:Name="Today_tasks_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" VerticalAlignment="Stretch">
-                            <Label Content="We Can't find any tasks for today" Foreground="{StaticResource Label-Gray-Color}" HorizontalAlignment="Center" Margin="0 10 0 0"/>
-                        </StackPanel>
-                    </ScrollViewer>
-                </StackPanel>
-            </Border>
+            <Calendar Grid.Column="1" Margin="10 5 0 5"/>
         </Grid>
 
         <!-- TABLES -->

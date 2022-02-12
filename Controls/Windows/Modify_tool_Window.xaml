@@ -197,7 +197,7 @@
                     </Grid.RowDefinitions>
 
                     <!-- Designation -->
-                    <TextBox x:Name="designation_add" Margin="0 5 5 5" BorderBrush="{DynamicResource MaterialDesignDivider}"
+                    <TextBox x:Name="designation_add" SpellCheck.IsEnabled="True" Margin="0 5 5 5" BorderBrush="{DynamicResource MaterialDesignDivider}"
                              materialDesign:HintAssist.Hint="Designation" Style="{DynamicResource textBoxInputStyle}" VerticalContentAlignment="Center" Padding="12"/>
 
                     <Grid Grid.Row="1">

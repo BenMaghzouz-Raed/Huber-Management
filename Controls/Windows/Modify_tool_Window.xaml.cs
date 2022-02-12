@@ -30,6 +30,8 @@ namespace Huber_Management.Controls
             Database_c.Close_DB_Connection();
         }
 
+        decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
+
         // INITIALIZE THE DATA OF THE SELECTED TOOL
         public async void Initialize_tool_data(string tool_serial_id, SqlConnection conn)
         {
@@ -51,6 +53,9 @@ namespace Huber_Management.Controls
 
                 designation_add.Text = row["Tool_designation"].ToString();
                 price_add.Text = row["Tool_price"].ToString();
+
+                decimal dt_price = decimal.Parse(row["Tool_price"].ToString());
+                price_add_DT.Text = (dt_price * dt_value).ToString();
 
                 InitializeComboBox("Tool_project", project_add_combobox, row["Tool_project"].ToString(), conn);            
                 InitializeComboBox("Tool_process", process_add_combobox, row["Tool_process"].ToString(), conn);
@@ -237,14 +242,30 @@ namespace Huber_Management.Controls
         {
             decimal price_euro = 0;
             decimal.TryParse(((TextBox)sender).Text.ToString(), out price_euro);
-            price_add_DT.Text = (price_euro * 3).ToString();
-        }
 
+            string price_c = (price_euro * dt_value).ToString();
+
+            if (price_c.Contains("."))
+            {
+                price_c += "000";
+                price_add_DT.Text = price_c.Remove(price_c.IndexOf(".") + 3);
+            }
+            else
+            {
+                price_add_DT.Text = price_c;
+            }
+        }
         private void price_add_DT_LostFocus(object sender, RoutedEventArgs e)
         {
             decimal price_dt = 0;
             decimal.TryParse(((TextBox)sender).Text.ToString(), out price_dt);
-            string price_c = (price_dt / 3).ToString();
+            string price_c = "";
+            if ( dt_value != 0)
+            {
+                price_c = (price_dt / dt_value).ToString();
+
+            }
+
             if (price_c.Contains("."))
             {
                 price_c += "000";

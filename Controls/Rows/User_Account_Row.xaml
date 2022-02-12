@@ -1,12 +1,79 @@
-﻿<UserControl x:Class="Huber_Management.Controls.Rows.User_Account_Row"
+﻿<UserControl x:Class="Huber_Management.Controls.User_Account_Row"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Huber_Management.Controls.Rows"
+             xmlns:local="clr-namespace:Huber_Management.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <UserControl.Resources>
+        <Style TargetType="Label">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style x:Key="single_row" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,0,3"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Height" Value="40"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Screen-bg-Color}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border x:Name="Tool_row_element" Style="{StaticResource single_row}">
+        <Border.ContextMenu>
+            <ContextMenu>
+                <!-- Edit User -->
+                <MenuItem x:Name="MenuItem_EditUser"  Header="Edit User" Click="MenuItem_EditUser_Click" >
+                    <MenuItem.Icon>
+                        <Canvas Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Path Fill="Black" Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+                        </Canvas>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <!-- DELETE -->
+                <MenuItem x:Name="MenuItem_Delete"  Header="Delete user" Click="MenuItem_Delete_Click" Foreground="{StaticResource Failed-red-Color}" >
+                    <MenuItem.Icon>
+                        <Canvas Width="24" Height="24">
+                            <Path Fill="{StaticResource Failed-red-Color}" Data="M12,4A4,4 0 0,1 16,8C16,9.95 14.6,11.58 12.75,11.93L8.07,7.25C8.42,5.4 10.05,4 12,4M12.28,14L18.28,20L20,21.72L18.73,23L15.73,20H4V18C4,16.16 6.5,14.61 9.87,14.14L2.78,7.05L4.05,5.78L12.28,14M20,18V19.18L15.14,14.32C18,14.93 20,16.35 20,18Z" />
+                        </Canvas>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+        </Border.ContextMenu>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="user_name" Grid.Column="0" Content="User Name" Foreground="{StaticResource Label-Gray-Color}"/>
+            <Label x:Name="user_fullname" Grid.Column="1" Content="Full Name" FontWeight="DemiBold"/>
+            <Label x:Name="user_added_time" Grid.Column="2" Content="Added Date" Foreground="{StaticResource Label-Gray-Color}"/>
+            <StackPanel Grid.Column="3" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Canvas Width="24" Height="24" Margin="0 0 5 0">
+                    <Path  x:Name="privilege_icon" Fill="{StaticResource Dark-main-Blue-Color}" Data="{DynamicResource Admin}"/>
+                </Canvas>
+                <Label x:Name="privilege_text" Content="Admin" Foreground="{StaticResource Label-Gray-Color}" />
+            </StackPanel>
+            <StackPanel x:Name="user_last_login" Grid.Column="4" Orientation="Vertical" VerticalAlignment="Bottom">
+                <Label x:Name="user_last_login_date" Padding="0" Content="Last Seen" Foreground="{StaticResource Label-Gray-Color}" FontWeight="SemiBold"/>
+                <Label x:Name="user_last_login_time" FontSize="10" Padding="0" Content="00:00" Foreground="{StaticResource Label-Gray-Color}" />
+            </StackPanel>
+            <StackPanel Name="is_connected" Visibility="Collapsed" VerticalAlignment="Center" Grid.Column="4" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Ellipse Height="10" Margin="0 2 0 0" Width="10" Fill="{DynamicResource Success-green-Color}"/>
+                <Label Content="Connected" FontWeight="SemiBold" Foreground="{StaticResource Success-green-Color}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>
+

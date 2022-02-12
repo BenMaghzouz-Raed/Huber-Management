@@ -18,11 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Huber-logo-rounded.png" />
     <None Remove="Assets\Huber-Suhner-Logo.png" />
     <None Remove="Assets\icons8-add-24.png" />
     <None Remove="Assets\icons8-add-image-96.png" />
     <None Remove="Assets\icons8-no-image-100.png" />
     <None Remove="Assets\Quality-162x162.png" />
+    <None Remove="Pages\All_tools_page.xaml~RF4685a56.TMP" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Huber-logo-rounded.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Huber-Suhner-Logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
