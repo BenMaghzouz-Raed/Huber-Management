@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using LiveCharts;
 using LiveCharts.Wpf;
 using System.Collections.Generic;
@@ -30,10 +30,10 @@ namespace Huber_Management.Pages
             }
 
             // INITIALIZE BY WHO COMBOBOX
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable by_who_table = new DataTable();
             string query = "SELECT DISTINCT(Transaction_by) as results FROM Transactions";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
             adapter.Fill(by_who_table);
             foreach (DataRow row in by_who_table.Rows)
             {
@@ -71,7 +71,7 @@ namespace Huber_Management.Pages
         }
         private Controls.TableHeader_RadioBtn Selected_sort_by { get; set; } = null;
 
-        public async void InitializeAllData(string when = "", string who = "", string filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
+        public async void InitializeAllData(string when = "", string who = "", string text_search_filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
         {
             if (LoadingIcon != null && DataScrollViewer != null)
             {
@@ -79,63 +79,81 @@ namespace Huber_Management.Pages
                 DataScrollViewer.Visibility = Visibility.Collapsed;
             }
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable all_data = new DataTable();
 
             string query = "Select * FROM Transactions LEFT JOIN Tools ON (Transaction_tool_serial_id = Tool_serial_id) WHERE (Transaction_type = 'IN') ";
-            
+
+
             // FILTER CONVERTER
-            switch (filter)
+            switch (text_search_filter)
             {
                 case "Serial Number":
-                    filter = "Transaction_tool_serial_id";
+                    text_search_filter = "Tool_serial_id";
                     break;
                 case "Drawing":
-                    filter = "Tool_drawing";
+                    text_search_filter = "Tool_drawing";
                     break;
                 case "Supplier":
-                    filter = "Tool_supplier";
+                    text_search_filter = "Tool_supplier";
                     break;
                 case "Position":
-                    filter = "Tool_position";
+                    text_search_filter = "Tool_position";
+                    break;
+                case "Project":
+                    text_search_filter = "Tool_project";
+                    break;
+                case "Process":
+                    text_search_filter = "Tool_process";
+                    break;
+                case "Division":
+                    text_search_filter = "Tool_division";
+                    break;
+                case "Supplier Code":
+                    text_search_filter = "Tool_supplier_code";
                     break;
                 default:
-                    filter = "Tool_serial_id";
+                    text_search_filter = "Tool_serial_id";
                     break;
             }
-
             // SEARCH CONVERTER
             if (_search_text != "" && _search_text.Length > 0)
             {
-                query += " AND " + filter + " LIKE '%" + _search_text + "%' ";
+                query += "AND " + text_search_filter + " LIKE '%" + _search_text + "%' ";
             }
 
             // WHEN CONVERTER
+            string date = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+            string[] YearMonth = date.Split("-");
+            string thisMonth = YearMonth[0] + "-" + YearMonth[1];
             switch (when)
             {
                 case "This Month":
-                    when = " AND ( MONTH(Transaction_date)=MONTH(GETDATE()) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', Transaction_date) = '" + thisMonth + "' ";
                     break;
                 case "Last Month":
-                    when = " AND ( MONTH(Transaction_date)<=( MONTH(GETDATE()) - 1 ) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    int lastMonth = int.Parse(YearMonth[1]) - 1;
+                    string last_month = lastMonth < 10 ? "0" + lastMonth.ToString() : lastMonth.ToString();
+                    when = " AND strftime('%Y-%m', Transaction_date) = '" + YearMonth[0] + "-" + last_month + "' ";
                     break;
                 case "Last Year":
-                    when = " AND ( YEAR(Transaction_date)= (YEAR(GETDATE()) - 1) ) ";
+                    int lastYear = int.Parse(YearMonth[0]) - 1;
+                    when = " AND strftime('%Y', Transaction_date) = '" + lastYear.ToString() + "' ";
                     break;
                 case "This Year":
-                    when = " AND ( YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y', Transaction_date) = '" + YearMonth[0] + "' ";
                     break;
                 case "All":
                     when = "";
                     break;
                 default:
-                    when = " AND ( MONTH(Transaction_date)=MONTH(GETDATE()) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', Transaction_date) = '" + thisMonth + "' ";
                     break;
             }
             query += when;
 
             // BY WHO CONVERTER
-            if(who != "Any" && who != "")
+            if (who != "Any" && who != "")
             {
                 query += " AND (Transaction_by = '" + who + "' ) ";
             }
@@ -178,7 +196,7 @@ namespace Huber_Management.Pages
             // EXECUTE QUERY
             try
             {
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                 adapter.Fill(all_data);
             }
             catch (Exception ex)
@@ -193,19 +211,19 @@ namespace Huber_Management.Pages
 
                     Tools_c newTool = new Tools_c
                     {
-                        Tool_serial_id = (string)row["Tool_serial_id"],
-                        Tool_designation = (string)row["Tool_designation"],
-                        Tool_drawing = (string)row["Tool_drawing"],
-                        Tool_project = (string)row["Tool_project"],
-                        Tool_process = (string)row["Tool_process"],
-                        Tool_division = (string)row["Tool_division"],
-                        Tool_position = (string)row["Tool_position"],
-                        Tool_supplier = (string)row["Tool_supplier"],
-                        Tool_stock_mini = (int)row["Tool_stock_mini"],
-                        Tool_stock_max = (int)row["Tool_stock_max"],
-                        Tool_actual_stock = (int)row["Tool_actual_stock"],
-                        Tool_price = (decimal)row["Tool_price"],
-                        Tool_image_path = (string)row["Tool_image_path"]
+                        Tool_serial_id = row["Tool_serial_id"].ToString(),
+                        Tool_designation = row["Tool_designation"].ToString(),
+                        Tool_drawing = row["Tool_drawing"].ToString(),
+                        Tool_project = row["Tool_project"].ToString(),
+                        Tool_process = row["Tool_process"].ToString(),
+                        Tool_division = row["Tool_division"].ToString(),
+                        Tool_position = row["Tool_position"].ToString(),
+                        Tool_supplier = row["Tool_supplier"].ToString(),
+                        Tool_stock_mini = int.Parse(row["Tool_stock_mini"].ToString()),
+                        Tool_stock_max = int.Parse(row["Tool_stock_max"].ToString()),
+                        Tool_actual_stock = int.Parse(row["Tool_actual_stock"].ToString()),
+                        Tool_price = decimal.Parse(row["Tool_price"].ToString()),
+                        Tool_image_path = row["Tool_image_path"].ToString()
                     };
 
                     Transactions_c reception = new Transactions_c
@@ -214,7 +232,7 @@ namespace Huber_Management.Pages
                         Transaction_tool_serial_id = row["Transaction_tool_serial_id"].ToString(),
                         Transaction_date = row["Transaction_date"].ToString(),
                         Transaction_quantity = int.Parse(row["Transaction_quantity"].ToString()),
-                        Transaction_req_prov = row["Transaction_req_prov"].ToString(),
+                        Output_requester = row["Output_requester"].ToString(),
                         Transaction_by = row["Transaction_by"].ToString(),
                         Transaction_comment = row["Transaction_comment"].ToString(),
                     };
@@ -238,15 +256,7 @@ namespace Huber_Management.Pages
 
         }
 
-        //private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    if(this.NavigationService != null)
-        //    {
-        //        this.NavigationService.Refresh();
-        //    }
-        //}
-
-        public void InitializeAllData_Filters(object sender, EventArgs e)
+        public void InitializeAllData_Filters_Function()
         {
             if (search_filter != null && Nav_search_box != null && when_combobox != null && by_who_combobox != null)
             {
@@ -274,7 +284,10 @@ namespace Huber_Management.Pages
                     MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
+        }
+        public void InitializeAllData_Filters(object sender, EventArgs e)
+        {
+            InitializeAllData_Filters_Function();
         }
 
         private void sort_by_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

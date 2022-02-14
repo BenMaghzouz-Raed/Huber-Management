@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Data;
 using System.IO;
 using System.Diagnostics;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Text.RegularExpressions;
 
 namespace Huber_Management.Controls
@@ -103,9 +103,9 @@ namespace Huber_Management.Controls
 
         private void MenuItem_Delete_Click(object sender, RoutedEventArgs e)
         {
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             string serial_id = this.tools_row_serial_id.Content.ToString();
-            MessageBoxResult dialogResult = MessageBox.Show("Are you sure that you want to permanently Delete " + serial_id + " from the database ?", "Delete " + serial_id + " ?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult dialogResult = MessageBox.Show("This may affect some other data in other Tables! Are you sure that you want to permanently Delete " + serial_id + " from the database ?", "Delete " + serial_id + " ?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (dialogResult == MessageBoxResult.Yes)
             {
                 Tools_c.Delete_by_serial_id(serial_id, conn);

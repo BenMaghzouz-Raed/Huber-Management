@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Huber_Management.Controls
         public Add_new_page()
         {
             InitializeComponent();
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
 
             // INITIALIZE DIVISION COMBOBOX
             InitializeComboBox("Tool_division", division_add_combobox, conn);
@@ -37,11 +38,11 @@ namespace Huber_Management.Controls
             Database_c.Close_DB_Connection();
 
         }
-        private async void InitializeComboBox(string Tool_column_name, ComboBox combobox_name, SqlConnection conn)
+        private async void InitializeComboBox(string Tool_column_name, ComboBox combobox_name, SQLiteConnection conn)
         {
             DataTable InitializeData = new DataTable();
             string query = "SELECT DISTINCT " + Tool_column_name + " as results FROM Tools GROUP BY (" + Tool_column_name + ")";
-            SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+            SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
             adapter.Fill(InitializeData);
             foreach (DataRow row in InitializeData.Rows)
             {

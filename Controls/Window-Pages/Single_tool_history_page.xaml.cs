@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,17 +25,17 @@ namespace Huber_Management.Controls
         public Single_tool_history_page(string serial_id)
         {
             InitializeComponent();
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             InitializeData(serial_id, conn);
             Database_c.Get_DB_Connection();
         }
 
-        public async void InitializeData(string serial_id, SqlConnection conn)
+        public async void InitializeData(string serial_id, SQLiteConnection conn)
         {
             // Transactions
             DataTable table1 = new DataTable();
             string Query1 = "SELECT * FROM Transactions WHERE (Transaction_tool_serial_id = '" + serial_id + "') Order By Transaction_date DESC";
-            SqlDataAdapter adapter1 = await Task.Run(() => new SqlDataAdapter(Query1, conn));
+            SQLiteDataAdapter adapter1 = await Task.Run(() => new SQLiteDataAdapter(Query1, conn));
             adapter1.Fill(table1);
             if (table1.Rows.Count > 0)
             {
@@ -48,7 +48,7 @@ namespace Huber_Management.Controls
                     date[1],
                     row["Transaction_type"].ToString(),
                     row["Transaction_quantity"].ToString(),
-                    row["Transaction_req_prov"].ToString(),
+                    row["Output_requester"].ToString(),
                     row["Transaction_by"].ToString(),
                     row["Transaction_comment"].ToString()
                     ));

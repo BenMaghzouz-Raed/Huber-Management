@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 
 namespace Huber_Management.Pages
 {
@@ -24,7 +24,7 @@ namespace Huber_Management.Pages
             // PRIVILEGES SETTINGS
             if (!MainWindow.Connected_user.canAdd)
             {
-                Add_tool_to_db.Visibility = Visibility.Collapsed;
+                Add_tool_to_db.IsEnabled = false;
             }
 
             serial_id.tableHeader_Label.Content = serial_id.Tag.ToString();
@@ -48,35 +48,10 @@ namespace Huber_Management.Pages
                 DataScrollViewer.Visibility = Visibility.Collapsed;
             }
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable all_data = new DataTable();
-            // TOP CONVERTER
-            switch (top)
-            {
-                case "15":
-                    top = "top 15";
-                    break;
-                case "30":
-                    top = "top 30";
-                    break;
-                case "50":
-                    top = "top 50";
-                    break;
-                case "100":
-                    top = "top 100";
-                    break;
-                case "200":
-                    top = "top 200";
-                    break;
-                case "All":
-                    top = "";
-                    break;
-                default:
-                    top = "top 15";
-                    break;
-            }
 
-            string query = "Select " + top + " * FROM Tools ";
+            string query = "Select * FROM Tools ";
 
             // FILTER CONVERTER
             switch (text_search_filter)
@@ -168,13 +143,27 @@ namespace Huber_Management.Pages
             // DSEC or ASC CONVERTER
             if (DESC)
             {
-                query += " DESC";
+                query += " DESC ";
+            }
+
+            // TOP CONVERTER
+            if(top != "All" && top != "")
+            {
+                query += " LIMIT " + top;
+            }
+            else if(top == "All")
+            {
+                query += "";
+            }
+            else
+            {
+                query += " LIMIT 15";
             }
 
             // EXECUTE QUERY
             try
             {
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                 adapter.Fill(all_data);
             }
             catch (Exception ex)
@@ -189,19 +178,19 @@ namespace Huber_Management.Pages
 
                     Tools_c newTool = new Tools_c
                     {
-                        Tool_serial_id = (string)row["Tool_serial_id"],
-                        Tool_designation = (string)row["Tool_designation"],
-                        Tool_drawing = (string)row["Tool_drawing"],
-                        Tool_project = (string)row["Tool_project"],
-                        Tool_process = (string)row["Tool_process"],
-                        Tool_division = (string)row["Tool_division"],
-                        Tool_position = (string)row["Tool_position"],
-                        Tool_supplier = (string)row["Tool_supplier"],
-                        Tool_stock_mini = (int)row["Tool_stock_mini"],
-                        Tool_stock_max = (int)row["Tool_stock_max"],
-                        Tool_actual_stock = (int)row["Tool_actual_stock"],
-                        Tool_price = (decimal)row["Tool_price"],
-                        Tool_image_path = (string)row["Tool_image_path"]
+                        Tool_serial_id = row["Tool_serial_id"].ToString(),
+                        Tool_designation = row["Tool_designation"].ToString(),
+                        Tool_drawing = row["Tool_drawing"].ToString(),
+                        Tool_project = row["Tool_project"].ToString(),
+                        Tool_process = row["Tool_process"].ToString(),
+                        Tool_division = row["Tool_division"].ToString(),
+                        Tool_position = row["Tool_position"].ToString(),
+                        Tool_supplier = row["Tool_supplier"].ToString(),
+                        Tool_stock_mini = int.Parse(row["Tool_stock_mini"].ToString()),
+                        Tool_stock_max = int.Parse(row["Tool_stock_max"].ToString()),
+                        Tool_actual_stock = int.Parse(row["Tool_actual_stock"].ToString()),
+                        Tool_price = decimal.Parse(row["Tool_price"].ToString()),
+                        Tool_image_path = row["Tool_image_path"].ToString()
                     };
                     All_tools_rows_panel.Children.Add(new Controls.All_Tools_Row(newTool));
                 }
@@ -237,7 +226,7 @@ namespace Huber_Management.Pages
         }
 
         // Get Data With Filtring 
-        public void InitializeAllData_Filters(object sender, EventArgs e)
+        public void InitializeAllData_Filters_Function()
         {
             if (search_filter != null && Nav_search_box != null && top_combobox != null && filter_combobox != null )
             {
@@ -264,6 +253,11 @@ namespace Huber_Management.Pages
                     MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        public void InitializeAllData_Filters(object sender, EventArgs e)
+        {
+            InitializeAllData_Filters_Function();
         }
 
         private void sort_by_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

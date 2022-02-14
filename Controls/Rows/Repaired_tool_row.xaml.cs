@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +28,8 @@ namespace Huber_Management.Controls
             InitializeOneRow(Tool, repaired_id, causes, repaired_date, repaired_quantity, repaired_by);
         }
 
-        public async void InitializeOneRow(Tools_c Tool, string repaired_id, string causes, string repaired_date, string repaired_quantity, string repaired_by)
-        {
+        public void InitializeOneRow(Tools_c Tool, string repaired_id, string causes, string repaired_date, string repaired_quantity, string repaired_by)
+        {   
             this.repaired_id.Content = repaired_id;
 
             string[] date = repaired_date.Split(null);
@@ -50,24 +50,12 @@ namespace Huber_Management.Controls
             decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
 
             decimal total_price = (decimal)(price * int.Parse(repaired_quantity));
-            string total_price_c = total_price.ToString("C").Remove(0, 1);
+            string total_price_c = total_price.ToString("C");
             string total_price_dt_c = (total_price * dt_value).ToString("C").Remove(0, 1);
-            this.repaired_total.Content = total_price_c + " €";
+            this.repaired_total.Content = total_price_c;
             this.repaired_total.ToolTip = total_price_dt_c + " DT";
 
             this.repaired_causes.Text = causes;
-
-            DataTable result = new DataTable();
-            SqlConnection conn = Database_c.Get_DB_Connection();
-            string Durationquery = "SELECT DATEDIFF(DAY, Faulty_Tools.added_date, repaired_date) as Duration FROM Faulty_Tools,Repaired_Tools WHERE Repaired_Tools.Repaired_tool_id = '" + repaired_id.ToString() + "' " +
-                "AND Repaired_Tools.Faulty_tools_id = Faulty_Tools.Faulty_tool_id";
-            SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(Durationquery, conn));
-            adapter.Fill(result);
-            if(result.Rows.Count > 0)
-            {
-                duration.Content = result.Rows[0]["Duration"].ToString() + " Days";
-            }
-            Database_c.Close_DB_Connection();
         }
 
         public void Tool_row_element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

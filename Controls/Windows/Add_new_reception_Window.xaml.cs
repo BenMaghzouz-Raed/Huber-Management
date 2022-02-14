@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,7 +87,7 @@ namespace Huber_Management.Controls
                 }
                 if(selected_serial_id != "")
                 {
-                    SqlConnection conn = Database_c.Get_DB_Connection();
+                    SQLiteConnection conn = Database_c.Get_DB_Connection();
                     DataTable result = await Task.Run(() => Tools_c.Get_by_serial_id(selected_serial_id, conn));
                     reception_tool = new Tools_c();
 
@@ -97,6 +97,14 @@ namespace Huber_Management.Controls
                     decimal price = 0;
                     decimal.TryParse(result.Rows[0]["Tool_price"].ToString(), out price);
                     reception_tool.Tool_price = price;
+
+                    int actual_stock = 0;
+                    int.TryParse(result.Rows[0]["Tool_actual_stock"].ToString(), out actual_stock);
+                    reception_tool.Tool_actual_stock = actual_stock;
+
+                    int stock_min = 0;
+                    int.TryParse(result.Rows[0]["Tool_stock_mini"].ToString(), out stock_min);
+                    reception_tool.Tool_stock_mini = stock_min;
 
                     reception_tool.Tool_project = result.Rows[0]["Tool_project"].ToString();
                     reception_tool.Tool_designation = result.Rows[0]["Tool_designation"].ToString();
@@ -154,37 +162,38 @@ namespace Huber_Management.Controls
         {
             if (new_reception.quantity_add.Text.ToString() != "")
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 string serial_id = reception_tool.Tool_serial_id;
                 bool exist = Tools_c.isExist_serial_id(serial_id, conn);
 
-                string query = "INSERT INTO Transactions (Transaction_type, Transaction_tool_serial_id, Transaction_quantity, Transaction_by, Transaction_comment)" +
-                " Values( 'IN', @Transaction_tool_serial_id, @Transaction_quantity, 'Saif Eddine Hamdi', @Transaction_comment)";
+                string query = "INSERT INTO Transactions (Transaction_type, Transaction_tool_serial_id, Transaction_quantity, Transaction_by, Transaction_comment, Transaction_date)" +
+                " Values( 'IN', @Transaction_tool_serial_id, @Transaction_quantity, @Transaction_by, @Transaction_comment, DATETIME('now', 'localtime'))";
 
-                SqlCommand command = new SqlCommand(query, conn);
-                command.Parameters.Add(new SqlParameter("@Transaction_tool_serial_id", serial_id));
+                SQLiteCommand command = new SQLiteCommand(query, conn);
+                command.Parameters.AddWithValue("@Transaction_tool_serial_id", serial_id);
 
                 int quantity = 0;
                 int.TryParse(new_reception.quantity_add.Text.ToString(), out quantity);
-                command.Parameters.Add(new SqlParameter("@Transaction_quantity", quantity));
+                command.Parameters.AddWithValue("@Transaction_quantity", quantity);
 
                 decimal price = 0;
                 decimal.TryParse(new_reception.price_add.Text.ToString(), out price);
 
-                command.Parameters.Add(new SqlParameter("@Transaction_comment", new_reception.comment_add.Text.ToString()));
+                command.Parameters.AddWithValue("@Transaction_by", MainWindow.Connected_user.user_fullName.ToString());
+                command.Parameters.AddWithValue("@Transaction_comment", new_reception.comment_add.Text.ToString());
                 await Task.Run(() => command.ExecuteNonQuery());
 
                 if (exist)  // CONFIRMATION BY SEARCH PAGE
                 {
                     // Update Actual Stock 
                     string Updatequery = "UPDATE Tools SET Tool_actual_stock = Tool_actual_stock + @Transaction_quantity, Tool_price = @Tool_price, Tool_supplier_code = @Tool_supplier_Code WHERE Tool_serial_id = @Tool_serial_id";
-                    SqlCommand command2 = new SqlCommand(Updatequery, conn);
-                    command2.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
-                    command2.Parameters.Add(new SqlParameter("@Transaction_quantity", quantity));
+                    SQLiteCommand command2 = new SQLiteCommand(Updatequery, conn);
+                    command2.Parameters.AddWithValue("@Tool_serial_id", serial_id);
+                    command2.Parameters.AddWithValue("@Transaction_quantity", quantity);
 
-                    command2.Parameters.Add(new SqlParameter("@Tool_price", price));
+                    command2.Parameters.AddWithValue("@Tool_price", price);
 
-                    command2.Parameters.Add(new SqlParameter("@Tool_supplier_Code", new_reception.supplier_code_add.Text.ToString()));
+                    command2.Parameters.AddWithValue("@Tool_supplier_Code", new_reception.supplier_code_add.Text.ToString());
                     await Task.Run(() => command2.ExecuteNonQuery());
                 }
                 else // CONFIRMATION BY ADD NEW PAGE
@@ -198,6 +207,10 @@ namespace Huber_Management.Controls
 
                 Database_c.Close_DB_Connection();
                 MessageBox.Show(serial_id + " added succesfully to received transactions! Please reload the page", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (MainWindow._Reception_page != null)
+                {
+                    MainWindow._Reception_page.NavigationService.Refresh();
+                }
                 this.Close();
             }
             else
@@ -211,7 +224,7 @@ namespace Huber_Management.Controls
             string serial_id = new_tool.Serial_nb_add.Text.ToString();
             if (serial_id != "")
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 bool exist = Tools_c.isExist_serial_id(serial_id, conn);
                 if (exist)
                 {

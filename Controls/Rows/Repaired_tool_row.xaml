@@ -65,7 +65,6 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!-- id -->
@@ -85,9 +84,6 @@
                    Foreground="{StaticResource Label-Gray-Color}" TextTrimming="CharacterEllipsis" 
                        TextAlignment="Center" HorizontalAlignment="Center"/>
             <Label x:Name="repaired_date" Grid.Column="7" Content="DD/MM/YYYY" FontWeight="DemiBold"/>
-            <Label x:Name="duration" Grid.Column="8" Content="34 Days" FontWeight="DemiBold"/>
-
-
         </Grid>
     </Border>
 </UserControl>

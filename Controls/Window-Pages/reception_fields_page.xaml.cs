@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +37,13 @@ namespace Huber_Management.Controls
             serial_nb_detail.Text = reception_tool.Tool_serial_id;
             project_detail.Text = reception_tool.Tool_project;
             designation_detail.Text = reception_tool.Tool_designation;
+
+            actual_stock_detail.Text = reception_tool.Tool_actual_stock.ToString() + " Available";
+            if (reception_tool.Tool_stock_mini > reception_tool.Tool_actual_stock)
+            {
+                actual_stock_detail.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FAE7E6");
+                actual_stock_detail.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#A20000");
+            }
 
             string image_path = reception_tool.Tool_image_path;
             if (image_path != "")

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,12 +34,13 @@ namespace Huber_Management.Controls
             //supplier_code_add.Text = reception_tool.Tool_supplier_code;
             faulty_serial_id.Text = faulty_id;
             price_add.Text = repaired_tool.Tool_price.ToString();
-
             serial_nb_detail.Text = repaired_tool.Tool_serial_id;
+
             if (repaired_tool.Tool_project != "")
             {
                 project_detail.Text = repaired_tool.Tool_project;
             }
+
             if (repaired_tool.Tool_designation != "")
             {
                 designation_detail.Text = repaired_tool.Tool_designation;
@@ -52,7 +53,7 @@ namespace Huber_Management.Controls
                 actual_stock_detail.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FAE7E6");
                 actual_stock_detail.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#A20000");
             }
-            defective_detail.Text = faulty_quantity;
+            defective_detail.Text = faulty_quantity.ToString();
 
             string image_path = repaired_tool.Tool_image_path;
             if (image_path != "")

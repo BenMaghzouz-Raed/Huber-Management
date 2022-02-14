@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;    //*local DB
+using System.Data.SQLite;    //*local DB
 using System.Data;
 using System.Windows;
 
@@ -24,32 +24,33 @@ namespace Huber_Management
         public bool canReception { get; set; } = false;
         public bool canCheckout { get; set; } = false;
         public bool canPurchaseOrder { get; set; } = false;
+        public bool canRepair { get; set; } = false;
 
         public static DataTable Get_by_name(String _name)
         {
-            SqlConnection con = Database_c.Get_DB_Connection();
+            SQLiteConnection con = Database_c.Get_DB_Connection();
             DataTable table = new DataTable();
 
             String Query = "SELECT * FROM Users WHERE User_name = @username";
 
-            SqlCommand command = new SqlCommand(Query, con);
-            command.Parameters.Add(new SqlParameter("@username", _name));
+            SQLiteCommand command = new SQLiteCommand(Query, con);
+            command.Parameters.AddWithValue("@username", _name);
 
-            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
             adapter.Fill(table);
             return table;
         }
 
-        public static bool isExist_user_name(string _user_name, SqlConnection con)
+        public static bool isExist_user_name(string _user_name, SQLiteConnection con)
         {
             DataTable table = new DataTable();
 
             string Query = "SELECT COUNT(*) as count_id FROM Users WHERE User_name = @user_name";
 
-            SqlCommand command = new SqlCommand(Query, con);
-            command.Parameters.Add(new SqlParameter("@user_name", _user_name));
+            SQLiteCommand command = new SQLiteCommand(Query, con);
+            command.Parameters.AddWithValue("@user_name", _user_name);
 
-            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
             adapter.Fill(table);
             int number = int.Parse(table.Rows[0]["count_id"].ToString());
             bool test = (number == 0) ? false : true;
@@ -57,13 +58,13 @@ namespace Huber_Management
             return test;
         }
 
-        public static void Delete_by_user_name(string _user_name, SqlConnection con)
+        public static void Delete_by_user_name(string _user_name, SQLiteConnection con)
         {
             string Query = "Delete FROM Users WHERE User_name = @user_name";
             try
             {
-                SqlCommand command = new SqlCommand(Query, con);
-                command.Parameters.Add(new SqlParameter("@user_name", _user_name));
+                SQLiteCommand command = new SQLiteCommand(Query, con);
+                command.Parameters.AddWithValue("@user_name", _user_name);
                 command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -74,15 +75,18 @@ namespace Huber_Management
             finally
             {
                 MessageBox.Show("'" + _user_name + "' Account deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (MainWindow._Settings_page != null)
+                {
+                    MainWindow._Settings_page.NavigationService.Refresh();
+                }
             }
-
         }
 
-        //public static string getConnectedUserUserName(SqlConnection conn)
+        //public static string getConnectedUserUserName(SQLiteConnection conn)
         //{
         //    string query = "SELECT User_name FROM Users WHERE isConnected = 1";
         //    DataTable table = new DataTable();
-        //    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+        //    SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
         //    adapter.Fill(table);
 
         //    if (table.Rows.Count > 0)

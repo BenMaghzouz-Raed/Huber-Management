@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,7 +52,6 @@ namespace Huber_Management.Controls
                 privilege_text.Content = user.privileges_id;
                 privilege_icon.Data = Geometry.Parse("M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z");
                 privilege_icon.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom("#91A6B1");
-
             }
 
             if (user.isConnected)
@@ -73,7 +72,7 @@ namespace Huber_Management.Controls
 
         private void MenuItem_Delete_Click(object sender, RoutedEventArgs e)
         {
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             string user_name = this.user_name.Content.ToString();
             MessageBoxResult dialogResult = MessageBox.Show("Are you sure that you want to permanently Delete " + user_name + " account ?", "Delete " + user_name + " ?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             

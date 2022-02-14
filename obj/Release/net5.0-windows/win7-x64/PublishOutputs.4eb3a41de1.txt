@@ -1,0 +1,14 @@
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\Huber-Management.pdb
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\clrcompression.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\clrjit.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\coreclr.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\mscordaccore.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\D3DCompiler_47_cor3.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\PenImc_cor3.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\PresentationNative_cor3.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\vcruntime140_cor3.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\wpfgfx_cor3.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\grpc_csharp_ext.x64.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\sni.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\SQLite.Interop.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\win7-x64\publish\Huber-Management.exe

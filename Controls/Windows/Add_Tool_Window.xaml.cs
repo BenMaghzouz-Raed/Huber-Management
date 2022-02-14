@@ -3,7 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace Huber_Management.Controls
         public Add_Tool_Window()
         {
             InitializeComponent();
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
 
             // INITIALIZE DIVISION COMBOBOX
             InitializeComboBox("Tool_project", project_add_combobox, conn);
@@ -45,11 +45,11 @@ namespace Huber_Management.Controls
             Database_c.Close_DB_Connection();
         }
 
-        private async void InitializeComboBox(string Tool_column_name, ComboBox combobox_name, SqlConnection conn)
+        private async void InitializeComboBox(string Tool_column_name, ComboBox combobox_name, SQLiteConnection conn)
         {
             DataTable InitializeData = new DataTable();
             string query = "SELECT DISTINCT " + Tool_column_name + " as results FROM Tools GROUP BY (" + Tool_column_name + ")";
-            SqlDataAdapter adapter = await Task.Run(() =>  new SqlDataAdapter(query, conn));
+            SQLiteDataAdapter adapter = await Task.Run(() =>  new SQLiteDataAdapter(query, conn));
             adapter.Fill(InitializeData);
             foreach (DataRow row in InitializeData.Rows)
             {
@@ -70,7 +70,7 @@ namespace Huber_Management.Controls
         private async void Add_new_tool_Click(object sender, RoutedEventArgs e)
         {
             bool isAdded = false;
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             string serial_id = string.Join(" ", Serial_nb_add.Text.ToString().Split().Where(x => x != ""));
 
             if ( serial_id == "")
@@ -135,7 +135,12 @@ namespace Huber_Management.Controls
                 isAdded = await Task.Run(() => Tools_c.Add_single_tool(NewTool,conn));
                 if (isAdded)
                 {
-                    MessageBox.Show(quantity + " Tool(s) with Serial number = '" + serial_id + "' added successfully. Please reload the page", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(quantity + " Tool(s) with Serial number = '" + serial_id + "' added successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (MainWindow._All_tools_page != null)
+                    {
+                        MainWindow._All_tools_page.NavigationService.Refresh();
+                    }
+                    //MainWindow._All_tools_page.InitializeAllData_Filters_Function();
                     this.Close();
                 }
                 Database_c.Close_DB_Connection();

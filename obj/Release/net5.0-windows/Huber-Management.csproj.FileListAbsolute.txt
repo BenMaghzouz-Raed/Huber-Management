@@ -139,3 +139,11 @@ C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\obj\Release\net5.0
 C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\obj\Release\net5.0-windows\Controls\Window-Pages\search_from_defective_page.g.cs
 C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\obj\Release\net5.0-windows\Controls\Rows\Search_from_defective_row.baml
 C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\obj\Release\net5.0-windows\Controls\Window-Pages\search_from_defective_page.baml
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\EntityFramework.SqlServer.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\EntityFramework.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\System.Data.SQLite.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\System.Data.SQLite.EF6.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\runtimes\linux-x64\native\SQLite.Interop.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\runtimes\osx-x64\native\SQLite.Interop.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\runtimes\win-x64\native\SQLite.Interop.dll
+C:\Users\bmrae\source\repos\Huber-Management\Huber-Management\bin\Release\net5.0-windows\runtimes\win-x86\native\SQLite.Interop.dll

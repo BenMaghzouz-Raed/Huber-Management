@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,11 +17,11 @@ namespace Huber_Management
         public int Criticality_C_value { get; set; } = 15;
 
 
-        public static int getDefaultSettings_id(SqlConnection conn)
+        public static int getDefaultSettings_id(SQLiteConnection conn)
         {
             string query = "SELECT Settings_id FROM App_settings WHERE isDefault = 1";
             DataTable table = new DataTable();
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
             adapter.Fill(table);
 
             if (table.Rows.Count > 0)
@@ -35,7 +35,7 @@ namespace Huber_Management
 
         }
 
-        public static bool updateDefaultSettings(SqlConnection conn, App_settings_c database_settings)
+        public static bool updateDefaultSettings(SQLiteConnection conn, App_settings_c database_settings)
         {
             int settings_id_default = getDefaultSettings_id(conn);
 
@@ -56,12 +56,12 @@ namespace Huber_Management
 
             try
             {
-                SqlCommand command = new SqlCommand(query, conn);
+                SQLiteCommand command = new SQLiteCommand(query, conn);
 
-                command.Parameters.Add(new SqlParameter("@Euro_to_dt_value", database_settings.Euro_to_dt_value));
-                command.Parameters.Add(new SqlParameter("@Criticality_A_value", database_settings.Criticality_A_value));
-                command.Parameters.Add(new SqlParameter("@Criticality_B_value", database_settings.Criticality_B_value));
-                command.Parameters.Add(new SqlParameter("@Criticality_C_value", database_settings.Criticality_C_value));
+                command.Parameters.AddWithValue("@Euro_to_dt_value", database_settings.Euro_to_dt_value);
+                command.Parameters.AddWithValue("@Criticality_A_value", database_settings.Criticality_A_value);
+                command.Parameters.AddWithValue("@Criticality_B_value", database_settings.Criticality_B_value);
+                command.Parameters.AddWithValue("@Criticality_C_value", database_settings.Criticality_C_value);
 
                 command.ExecuteNonQuery();
             }
@@ -75,11 +75,11 @@ namespace Huber_Management
 
         }
 
-        public static DataTable getAllDefaultSettings(SqlConnection conn)
+        public static DataTable getAllDefaultSettings(SQLiteConnection conn)
         {
             string query = "SELECT * FROM App_settings WHERE isDefault = 1";
             DataTable table = new DataTable();
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
 
             adapter.Fill(table);
             return table;

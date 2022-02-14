@@ -90,21 +90,11 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <!-- Supplier code -->
                 <TextBox  x:Name="supplier_code_add" Margin="0 5 5 5" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12" 
                           VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Supplier Code"  BorderBrush="{DynamicResource MaterialDesignDivider}"/>
-                
-                <Grid Grid.Column="1" Margin="5 5 0 5" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Padding="0" Margin="2 0" HorizontalAlignment="Left" Text="Subtract Defective quantity from the tool actual stock ?" TextWrapping="Wrap"/>
-                    <RadioButton x:Name="subtract_toggleButton" Cursor="Hand" Grid.Column="1" HorizontalAlignment="Right"
-                                 Style="{StaticResource MaterialDesignSwitchDarkToggleButton}" IsChecked="False" Margin="15 0 0 0"/>
-                </Grid>
+
             </Grid>
 
             <!-- Comment -->

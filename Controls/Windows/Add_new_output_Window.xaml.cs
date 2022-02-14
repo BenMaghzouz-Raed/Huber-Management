@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,7 +84,7 @@ namespace Huber_Management.Controls
 
             if (quantity > 0)
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 string serial_id = new_output.serial_nb_detail.Text.ToString();
 
                 // check if the wanted quantity is valid
@@ -93,36 +93,42 @@ namespace Huber_Management.Controls
 
                 if (actual_stock >= quantity)
                 {
-                    string query = "INSERT INTO Transactions (Transaction_type, Transaction_tool_serial_id, Transaction_quantity, Transaction_req_prov, Transaction_by, Transaction_comment)" +
-                    " Values( 'OUT', @Transaction_tool_serial_id, @Transaction_quantity, @Transaction_req_prov, 'Saif Eddine Hamdi', @Transaction_comment)";
+                    string query = "INSERT INTO Transactions (Transaction_type, Transaction_tool_serial_id, Transaction_quantity, Transaction_by, Output_requester, Output_DSI, Transaction_comment, Transaction_date)" +
+                    " Values( 'OUT', @Transaction_tool_serial_id, @Transaction_quantity, @Transaction_by, @Output_requester, @Output_DSI, @Transaction_comment, DATETIME('now', 'localtime'))";
 
-                    SqlCommand command = new SqlCommand(query, conn);
-                    command.Parameters.Add(new SqlParameter("@Transaction_tool_serial_id", serial_id));
+                    SQLiteCommand command = new SQLiteCommand(query, conn);
+                    command.Parameters.AddWithValue("@Transaction_tool_serial_id", serial_id);
 
-
-                    command.Parameters.Add(new SqlParameter("@Transaction_quantity", quantity));
+                    command.Parameters.AddWithValue("@Transaction_quantity", quantity);
+                    command.Parameters.AddWithValue("@Output_DSI", new_output.dsi_add.Text.ToString());
 
                     string requester = getComboBox_or_TextBox_value(new_output.requester_add_combobox, new_output.requester_add);
-                    command.Parameters.Add(new SqlParameter("@Transaction_req_prov", requester));
+                    command.Parameters.AddWithValue("@Output_requester", requester);
 
-                    command.Parameters.Add(new SqlParameter("@Transaction_comment", new_output.comment_add.Text.ToString()));
+                    command.Parameters.AddWithValue("@Transaction_by", MainWindow.Connected_user.user_fullName.ToString());
+                    command.Parameters.AddWithValue("@Transaction_comment", new_output.comment_add.Text.ToString());
                     await Task.Run(() => command.ExecuteNonQuery());
 
                     // Update Actual Stock 
                     string Updatequery = "UPDATE Tools SET Tool_actual_stock = Tool_actual_stock - @Transaction_quantity, Tool_price = @Tool_price WHERE Tool_serial_id = @Tool_serial_id";
-                    SqlCommand command2 = new SqlCommand(Updatequery, conn);
-                    command2.Parameters.Add(new SqlParameter("@Transaction_quantity", quantity));
-                    command2.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
+                    SQLiteCommand command2 = new SQLiteCommand(Updatequery, conn);
+                    command2.Parameters.AddWithValue("@Transaction_quantity", quantity);
+                    command2.Parameters.AddWithValue("@Tool_serial_id", serial_id);
 
                     decimal price = (new_output.price_add.Text != "") ? decimal.Parse(new_output.price_add.Text) : 0;
-                    command2.Parameters.Add(new SqlParameter("@Tool_price", price));
+                    command2.Parameters.AddWithValue("@Tool_price", price);
                     await Task.Run(() => command2.ExecuteNonQuery());
                     MessageBox.Show(serial_id + " added succesfully to checkout transactions! Please reload the page", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (MainWindow._Output_page != null)
+                    {
+                        MainWindow._Output_page.NavigationService.Refresh();
+                    }
                     this.Close();
                 }
                 else
                 {
                     MessageBox.Show("You can't make this transaction for " + serial_id + "! Check your actual stock", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
                 Database_c.Close_DB_Connection();
             }

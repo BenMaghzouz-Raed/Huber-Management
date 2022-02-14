@@ -38,9 +38,9 @@
                          HorizontalContentAlignment="Stretch"  materialDesign:TextFieldAssist.LeadingIcon="Search" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource Dark-main-Blue-Color}"/>
 
                 <ComboBox x:Name="search_filter" Grid.Column="1" HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters"
-                    materialDesign:ColorZoneAssist.Mode="PrimaryMid" MinWidth="140" Height="36" Padding="10 0" Foreground="White"           
-                            BorderBrush="{DynamicResource MaterialDesignDivider}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0"
-                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Label-Gray-Color}">
+                            MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}" Style="{StaticResource MaterialDesignOutlinedComboBox}"         
+                            BorderBrush="{DynamicResource Label-Gray-Color}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0" BorderThickness="2 0 0 0"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}">
 
                     <ComboBoxItem Content="Serial Number" IsSelected="True"/>
                     <ComboBoxItem Content="Drawing"/>
@@ -132,7 +132,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="#" Style="{StaticResource Table-Header-label}"/>
-                    <controls:TableHeader_RadioBtn x:Name="serial_id" Grid.Column="1" Tag="Serial ID" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
+                    <controls:TableHeader_RadioBtn x:Name="serial_id" Grid.Column="1" Tag="Serial NB" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
                     <Label Grid.Column="2" Content="Designation" Style="{StaticResource Table-Header-label}"/>
                     <controls:TableHeader_RadioBtn x:Name="project" Grid.Column="3" Tag="Project" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />
                     <controls:TableHeader_RadioBtn x:Name="process" Grid.Column="4" Tag="Process" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" />

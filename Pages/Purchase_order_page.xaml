@@ -36,40 +36,39 @@
                          Padding="10 5" materialDesign:TextFieldAssist.HasLeadingIcon="True" 
                          HorizontalContentAlignment="Stretch"  materialDesign:TextFieldAssist.LeadingIcon="Search" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource Dark-main-Blue-Color}"/>
 
-                <ComboBox x:Name="search_filter" Grid.Column="1" BorderThickness="2 0 0 0"
-                            materialDesign:ColorZoneAssist.Mode="PrimaryLight" MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}"           
-                            BorderBrush="{DynamicResource MaterialDesignDivider}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0"
-                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}"
-                            HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+                <ComboBox x:Name="search_filter" Grid.Column="1" HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters"
+                            MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}" Style="{StaticResource MaterialDesignOutlinedComboBox}"         
+                            BorderBrush="{DynamicResource Label-Gray-Color}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0" BorderThickness="2 0 0 0"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}">
 
                     <ComboBoxItem Content="Serial Number" IsSelected="True"/>
                     <ComboBoxItem Content="Drawing"/>
-                    <ComboBoxItem Content="Supplier"/>
+                    <ComboBoxItem Content="Project"/>
                     <ComboBoxItem Content="Position"/>
+                    <ComboBoxItem Content="Process"/>
+                    <ComboBoxItem Content="Division"/>
+                    <ComboBoxItem Content="Supplier"/>
+                    <ComboBoxItem Content="Supplier Code"/>
                 </ComboBox>
             </Grid>
 
             <!-- Filters -->
-            <StackPanel Grid.Column="1" Visibility="Collapsed" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                <!-- FILTER -->
-                <Label Content="Filter:" FontSize="16" FontWeight="DemiBold" Foreground="{StaticResource Label-Gray-Color}" Margin="0 0 5 0" VerticalAlignment="Center"/>
-                <ComboBox x:Name="filter_combobox" Style="{StaticResource MaterialDesignComboBox}" Background="{StaticResource Screen-bg-Color}"
-                    materialDesign:ColorZoneAssist.Mode="PrimaryDark" MinWidth="110" Height="35" Padding="10 0"
+            <!-- Filters -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <Label Content="Top:" FontSize="14" FontWeight="Normal" Foreground="{StaticResource Label-Gray-Color}"  VerticalAlignment="Center"/>
+                <ComboBox x:Name="top_combobox" Style="{StaticResource MaterialDesignOutlinedComboBox}" Background="Transparent"
+                          Foreground="{StaticResource Label-Gray-Color}" BorderBrush="{StaticResource Label-Gray-Color}" MinWidth="65" Height="35" Padding="10 0"
                           VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"
                           HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
 
-                    <ComboBoxItem Content="All Tools" IsSelected="True"/>
-                    <ComboBoxItem Content="Faulty Tools"/>
-                    <ComboBoxItem Content="Out of Stock"/>
-                    <ComboBoxItem Content="Inused"/>
+                    <ComboBoxItem Content="15" IsSelected="True"/>
+                    <ComboBoxItem Content="30"/>
+                    <ComboBoxItem Content="50"/>
+                    <ComboBoxItem Content="100"/>
+                    <ComboBoxItem Content="200"/>
+                    <ComboBoxItem Content="All"/>
                 </ComboBox>
-
-                <!-- REFRESH -->
-                <Viewbox Width="22" Height="22" MouseDown="Viewbox_MouseDown" Cursor="Hand" Margin="15,0,0,0" ToolTip="Reload the page">
-                    <Canvas Width="24" Height="24">
-                        <Path Fill="{StaticResource Label-Gray-Color}" Data="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M18 11H13L14.81 9.19A3.94 3.94 0 0 0 12 8A4 4 0 1 0 15.86 13H17.91A6 6 0 1 1 12 6A5.91 5.91 0 0 1 16.22 7.78L18 6Z" />
-                    </Canvas>
-                </Viewbox>
             </StackPanel>
 
             <!-- Add New Tool-->

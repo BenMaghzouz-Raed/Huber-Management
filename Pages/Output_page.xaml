@@ -36,16 +36,19 @@
                          Padding="10 5" materialDesign:TextFieldAssist.HasLeadingIcon="True" 
                          HorizontalContentAlignment="Stretch"  materialDesign:TextFieldAssist.LeadingIcon="Search" materialDesign:TextFieldAssist.UnderlineBrush="{StaticResource Dark-main-Blue-Color}"/>
 
-                <ComboBox x:Name="search_filter" Grid.Column="1" BorderThickness="2 0 0 0"
-                            materialDesign:ColorZoneAssist.Mode="PrimaryLight" MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}"           
-                            BorderBrush="{DynamicResource MaterialDesignDivider}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0"
-                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}"
-                            HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters" >
+                <ComboBox x:Name="search_filter" Grid.Column="1" HorizontalAlignment="Stretch" FontSize="14" FontWeight="SemiBold" SelectionChanged="InitializeAllData_Filters"
+                            MinWidth="140" Height="36" Padding="10 0" Foreground="{StaticResource Label-Gray-Color}" Style="{StaticResource MaterialDesignOutlinedComboBox}"         
+                            BorderBrush="{DynamicResource Label-Gray-Color}" materialDesign:TextFieldAssist.TextFieldCornerRadius="0" BorderThickness="2 0 0 0"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Background="{StaticResource Screen-bg-Color}">
 
                     <ComboBoxItem Content="Serial Number" IsSelected="True"/>
                     <ComboBoxItem Content="Drawing"/>
-                    <ComboBoxItem Content="Supplier"/>
+                    <ComboBoxItem Content="Project"/>
                     <ComboBoxItem Content="Position"/>
+                    <ComboBoxItem Content="Process"/>
+                    <ComboBoxItem Content="Division"/>
+                    <ComboBoxItem Content="Supplier"/>
+                    <ComboBoxItem Content="Supplier Code"/>
                 </ComboBox>
             </Grid>
 
@@ -122,6 +125,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     
                     <controls:TableHeader_RadioBtn x:Name="date" Grid.Column="0" Tag="Date" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
@@ -130,10 +134,10 @@
                     <Label Grid.Column="3" Content="Designation" Style="{StaticResource Table-Header-label}" Foreground="white"/>
                     <controls:TableHeader_RadioBtn x:Name="quantity" Grid.Column="4" Tag="Quantity" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
                     <controls:TableHeader_RadioBtn x:Name="requester" Grid.Column="5" Tag="Requester" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
-                    <controls:TableHeader_RadioBtn x:Name="price" Grid.Column="6" Tag="Price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
-                    <controls:TableHeader_RadioBtn x:Name="total_price" Grid.Column="7" Tag="Total price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white" />
-                    <Label Grid.Column="8" Content="By" Style="{StaticResource Table-Header-label}" Foreground="white"/>
-
+                    <Label Grid.Column="6" Content="DSI" Style="{StaticResource Table-Header-label}" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="price" Grid.Column="7" Tag="Price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white"/>
+                    <controls:TableHeader_RadioBtn x:Name="total_price" Grid.Column="8" Tag="Total price (€)" MouseLeftButtonDown="sort_by_MouseLeftButtonDown" Foreground="white" />
+                    <Label Grid.Column="9" Content="By" Style="{StaticResource Table-Header-label}" Foreground="white"/>
 
                 </Grid>
             </Border>

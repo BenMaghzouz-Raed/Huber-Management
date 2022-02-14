@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace Huber_Management.Controls
         {
             InitializeComponent();
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             if (serial_nb_detail != null)
             {
                 DataTable result = Tools_c.Get_by_serial_id(serial_nb_detail, conn);
@@ -50,12 +50,12 @@ namespace Huber_Management.Controls
             string _search_text = ((TextBox)search_for_tools_to_add).Text.ToString();
             if (_search_text.Length > 0)
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 DataTable result = new DataTable();
                 // Create the Query
-                string query = "Select top 5 * FROM Faulty_Tools LEFT JOIN Tools ON (Faulty_Tools.Tool_serial_id = Tools.Tool_serial_id) WHERE (Faulty_Tools.Tool_serial_id LIKE '%" + _search_text + "%') AND Faulty_Tools.Faulty_quantity > 0 ORDER By Faulty_Tools.added_date";
+                string query = "SELECT * FROM Faulty_Tools LEFT JOIN Tools ON (Faulty_Tools.Tool_serial_id = Tools.Tool_serial_id) WHERE (Faulty_Tools.Tool_serial_id LIKE '%" + _search_text + "%') AND Faulty_Tools.Faulty_quantity > 0 ORDER By Faulty_Tools.added_date LIMIT 5";
                 // Execute the Query 
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                 await Task.Run(() => adapter.Fill(result));
                 if (result.Rows.Count > 0)
                 {

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +25,7 @@ namespace Huber_Management.Controls
         public Modify_tool_Window(string tool_serial_id)
         {
             InitializeComponent();
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             Initialize_tool_data(tool_serial_id, conn);
             Database_c.Close_DB_Connection();
         }
@@ -33,7 +33,7 @@ namespace Huber_Management.Controls
         decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
 
         // INITIALIZE THE DATA OF THE SELECTED TOOL
-        public async void Initialize_tool_data(string tool_serial_id, SqlConnection conn)
+        public async void Initialize_tool_data(string tool_serial_id, SQLiteConnection conn)
         {
             DataTable all_data = await Task.Run(() => Tools_c.Get_by_serial_id(tool_serial_id, conn));
             if(all_data.Rows.Count == 1)
@@ -79,11 +79,11 @@ namespace Huber_Management.Controls
 
             }
         }
-        private async void InitializeComboBox(string Tool_column_name, ComboBox combobox_name, string selectedValue, SqlConnection conn)
+        private async void InitializeComboBox(string Tool_column_name, ComboBox combobox_name, string selectedValue, SQLiteConnection conn)
         {
             DataTable InitializeData = new DataTable();
             string query = "SELECT DISTINCT " + Tool_column_name + " as results FROM Tools GROUP BY (" + Tool_column_name + ")";
-            SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+            SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
             adapter.Fill(InitializeData);
             foreach (DataRow row in InitializeData.Rows)
             {
@@ -109,7 +109,7 @@ namespace Huber_Management.Controls
         {
             bool isUpdated = false;
             // Add tool to Tools database
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
 
             string imagePath = ImagePath.Text.ToString();
             string ImageName = System.IO.Path.GetFileName(imagePath);
@@ -162,7 +162,6 @@ namespace Huber_Management.Controls
             {
                 MessageBox.Show("The Tool with Serial number = '" + Serial_nb_add.Text.ToString() + "' Updated successfully. Please reload the page", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
-                Database_c.Close_DB_Connection();
             }
             Database_c.Close_DB_Connection();
         }

@@ -4,7 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,7 +27,7 @@ namespace Huber_Management.Pages
         }
         void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             InitializeUsers(conn);
             InitializeSettings(conn);
             Database_c.Close_DB_Connection();
@@ -45,7 +45,7 @@ namespace Huber_Management.Pages
 
             if (returned == true)
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 int count_tools = 0;
                 int count_tools_failed = 0;
                 int count_transactions = 0;
@@ -129,7 +129,11 @@ namespace Huber_Management.Pages
                         int quantity_reception = 0;
                         int.TryParse(Row[5].ToString(), out quantity_reception);
 
+                        int quantity_output = 0;
+                        int.TryParse(Row[6].ToString(), out quantity_output);
+
                         string Transaction_serial_id = string.Join(" ", Row[3].ToString().Split().Where(x => x != ""));
+                        
                         if (quantity_reception > 0)
                         {
                             // ADD FOR RECEPTION
@@ -144,10 +148,7 @@ namespace Huber_Management.Pages
                             };
                             reception_isAdded = await Task.Run(() => Transactions_c.Add_single_Transaction(newReception, conn));
                         }
-
-                        int quantity_output = 0;
-                        int.TryParse(Row[6].ToString(), out quantity_output);
-                        if (quantity_output > 0)
+                        else if (quantity_output > 0)
                         {
                             // ADD FOR OUTPUT
                             Transactions_c newOutput = new Transactions_c
@@ -155,20 +156,22 @@ namespace Huber_Management.Pages
                                 Transaction_type = "OUT",
                                 Transaction_quantity = quantity_output,
                                 Transaction_tool_serial_id = Transaction_serial_id,
-                                Transaction_req_prov = string.Join(" ", Row[12].ToString().Split().Where(x => x != "")),
+                                Output_requester = string.Join(" ", Row[12].ToString().Split().Where(x => x != "")),
+                                Output_DSI = string.Join(" ", Row[7].ToString().Split().Where(x => x != "")),
                                 Transaction_by = string.Join(" ", Row[2].ToString().Split().Where(x => x != "")),
                                 Transaction_comment = string.Join(" ", Row[13].ToString().Split().Where(x => x != "")),
                                 Transaction_date = Row[1].ToString()
                             };
                             output_isAdded = await Task.Run(() => Transactions_c.Add_single_Transaction(newOutput, conn));
+                        
                         }
 
                         if (output_isAdded) { count_transactions++; output_isAdded = false; }
                         else if (reception_isAdded) { count_transactions++; reception_isAdded = false; }
-                        else { count_transactions_failed++; }
+                        else if (quantity_output + quantity_reception > 0) { count_transactions_failed++; }
 
                         // ADD TRANSACTION TO DDB IF IT DOESN'T ESXIST
-                        if(!Tools_c.isExist_serial_id(Transaction_serial_id, conn))
+                        if(!Tools_c.isExist_serial_id(Transaction_serial_id, conn) && (quantity_output + quantity_reception > 0))
                         {
                             decimal price = 0;
                             decimal.TryParse(Row[8].ToString(), out price);
@@ -222,15 +225,15 @@ namespace Huber_Management.Pages
             {
                 try
                 {
-                    SqlConnection conn = Database_c.Get_DB_Connection();
-                    string query = "SELECT Tool_supplier as Supplier, Tool_supplier_code as Supplier_Code_article, " +
+                    SQLiteConnection conn = Database_c.Get_DB_Connection();
+                    string query = "SELECT Tool_supplier as Supplier, Tool_supplier_code as Supplier_Code_Article, " +
                         "Tool_serial_id as Serial_NB, Tool_image_name as Photo, Tool_designation as Designation, " +
                         "Tool_drawing as Drawing, Tool_project as project, Tool_process as Process, Tool_division as Division, " +
                         "Tool_position as Position, Tool_stock_mini as Stock_Mini, Tool_stock_max as Stock_Maxi, " +
-                        "Tool_actual_stock as Actual_Stock, Tool_price as Price_euro " +
+                        "Tool_actual_stock as Actual_Stock, Tool_price as Price_euro, Tool_criticality as Criticality " +
                         "FROM Tools Order By Tool_date_added DESC";
 
-                    SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                    SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                     DataTable Tools_Table = new DataTable();
                     adapter.Fill(Tools_Table);
 
@@ -239,10 +242,10 @@ namespace Huber_Management.Pages
 
                     string query1 = "SELECT Transaction_date as Date, Transaction_by as Who, " +
                         "Transaction_tool_serial_id as Serial_NB, Transaction_type as Type, Transaction_quantity as Quantity, " +
-                        "Transaction_req_prov as Requester, Transaction_comment as Comment " +
+                        "Output_DSI as DSI, Output_requester as Requester, Transaction_comment as Comment " +
                         "FROM Transactions Order By Transaction_date DESC";
 
-                    SqlDataAdapter adapter1 = await Task.Run(() => new SqlDataAdapter(query1, conn));
+                    SQLiteDataAdapter adapter1 = await Task.Run(() => new SQLiteDataAdapter(query1, conn));
                     DataTable Transactions_Table = new DataTable();
                     adapter1.Fill(Transactions_Table);
 
@@ -277,13 +280,10 @@ namespace Huber_Management.Pages
             if (dialogResult == MessageBoxResult.Yes)
             {
                 bool tools_delete;
-                bool transactions_delete;
-                SqlConnection conn = Database_c.Get_DB_Connection();
-
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 tools_delete = await Task.Run(() => Tools_c.Delete_all(conn));
-                transactions_delete = await Task.Run(() => Transactions_c.Delete_all(conn));
 
-                if (transactions_delete && tools_delete)
+                if (tools_delete)
                 {
                     MessageBox.Show("All data deleted succesfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -299,28 +299,30 @@ namespace Huber_Management.Pages
             }
         }
     
-        private void InitializeUsers(SqlConnection conn)
+        private void InitializeUsers(SQLiteConnection conn)
         {
             DataTable UsersTable = new DataTable();
             users_rows_panel.Children.Clear();
             string query = "SELECT * FROM Users ";
 
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
             adapter.Fill(UsersTable);
 
             foreach (DataRow row in UsersTable.Rows)
             {
                 try
                 {
+                    int isAdmin = int.Parse(row["IsAdmin"].ToString());
+                    int isConnected = int.Parse(row["isConnected"].ToString());
                     users_c newUser = new users_c
                     {
                         user_name = row["User_name"].ToString(),
                         user_fullName = row["User_fullname"].ToString(),
                         last_login = row["Last_login"].ToString(),
-                        IsAdmin = bool.Parse(row["IsAdmin"].ToString()),
+                        IsAdmin = isAdmin == 1 ? true : false,
                         user_added_date = row["User_added_date"].ToString(),
                         privileges_id = row["Privileges_id"].ToString(),
-                        isConnected = bool.Parse(row["isConnected"].ToString()),
+                        isConnected = isConnected == 1 ? true : false,
                     };
 
                     users_rows_panel.Children.Add(new Controls.User_Account_Row(newUser));
@@ -332,13 +334,13 @@ namespace Huber_Management.Pages
             }
         }
 
-        private void InitializeSettings(SqlConnection conn)
+        private void InitializeSettings(SQLiteConnection conn)
         {
             DataTable SettingsTable = new DataTable();
             string query = "SELECT * FROM App_settings WHERE isDefault = 1 ";
             try
             {
-                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
                 adapter.Fill(SettingsTable);
             }
             catch (Exception ex)
@@ -375,7 +377,7 @@ namespace Huber_Management.Pages
         private void Save_changes_Click(object sender, RoutedEventArgs e)
         {
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
 
             decimal Euro_to_dt_value;
             decimal.TryParse(price_convert_value.Text.ToString(), out Euro_to_dt_value);

@@ -3,7 +3,7 @@ using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,10 +33,10 @@ namespace Huber_Management.Pages
         void Load(object sender, RoutedEventArgs e)
         {
             // INITIALIZE BY WHO COMBOBOX
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable by_who_table = new DataTable();
             string query = "SELECT DISTINCT(Transaction_by) as results FROM Transactions";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
             adapter.Fill(by_who_table);
             foreach (DataRow row in by_who_table.Rows)
             {
@@ -87,7 +87,7 @@ namespace Huber_Management.Pages
                 DataScrollViewer.Visibility = Visibility.Collapsed;
             }
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable all_data = new DataTable();
 
             string query = "Select * FROM Transactions LEFT JOIN Tools ON (Transaction_tool_serial_id = Tool_serial_id) ";
@@ -123,25 +123,31 @@ namespace Huber_Management.Pages
             }
 
             // WHEN CONVERTER
+            string date = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+            string[] YearMonth = date.Split("-");
+            string thisMonth = YearMonth[0] + "-" + YearMonth[1];
             switch (when)
             {
                 case "This Month":
-                    when = " AND ( MONTH(Transaction_date)=MONTH(GETDATE()) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', Transaction_date) = '" + thisMonth + "' ";
                     break;
                 case "Last Month":
-                    when = " AND ( MONTH(Transaction_date)<=( MONTH(GETDATE()) - 1 ) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    int lastMonth = int.Parse(YearMonth[1]) - 1;
+                    string last_month = lastMonth < 10 ? "0"+lastMonth.ToString() : lastMonth.ToString();
+                    when = " AND strftime('%Y-%m', Transaction_date) = '" + YearMonth[0] + "-" + last_month + "' ";
                     break;
                 case "Last Year":
-                    when = " AND ( YEAR(Transaction_date)= (YEAR(GETDATE()) - 1) ) ";
+                    int lastYear = int.Parse(YearMonth[0]) - 1;
+                    when = " AND strftime('%Y', Transaction_date) = '" + lastYear.ToString() + "' ";
                     break;
                 case "This Year":
-                    when = " AND ( YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y', Transaction_date) = '" + YearMonth[0] + "' ";
                     break;
                 case "All":
                     when = "";
                     break;
                 default:
-                    when = " AND ( MONTH(Transaction_date)=MONTH(GETDATE()) and YEAR(Transaction_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', Transaction_date) = '" + thisMonth + "' ";
                     break;
             }
             query += when;
@@ -190,7 +196,7 @@ namespace Huber_Management.Pages
             // EXECUTE QUERY
             try
             {
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                 adapter.Fill(all_data);
                 if (History_rows_panel != null)
                 {
@@ -222,7 +228,7 @@ namespace Huber_Management.Pages
                         //        Transaction_tool_serial_id = row["Transaction_tool_serial_id"].ToString(),
                         //        Transaction_date = row["Transaction_date"].ToString(),
                         //        Transaction_quantity = int.Parse(row["Transaction_quantity"].ToString()),
-                        //        Transaction_req_prov = row["Transaction_req_prov"].ToString(),
+                        //        Output_requester = row["Output_requester"].ToString(),
                         //        Transaction_by = row["Transaction_by"].ToString(),
                         //        Transaction_comment = row["Transaction_comment"].ToString(),
                         //    };
@@ -238,7 +244,7 @@ namespace Huber_Management.Pages
                             row["Transaction_type"].ToString(),
                             row["Transaction_quantity"].ToString(),
                             row["Tool_price"].ToString(),
-                            row["Transaction_req_prov"].ToString(),
+                            row["Output_requester"].ToString(),
                             row["Tool_supplier"].ToString(),
                             row["Transaction_by"].ToString(),
                             row["Transaction_comment"].ToString()

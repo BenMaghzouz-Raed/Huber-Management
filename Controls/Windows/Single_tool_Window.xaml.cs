@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,12 +24,12 @@ namespace Huber_Management.Controls
         public Single_tool_Window(string serial_id)
         {
             InitializeComponent();
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             InitializeData(serial_id, conn);
             Database_c.Get_DB_Connection();
         }
 
-        public async void InitializeData(string serial_id, SqlConnection conn)
+        public async void InitializeData(string serial_id, SQLiteConnection conn)
         {
             bool isExist = Tools_c.isExist_serial_id(serial_id, conn);
             serial_nb_detail.Text = serial_id.ToString();
@@ -86,7 +86,7 @@ namespace Huber_Management.Controls
                 // Defective Quantity
                 DataTable defective_data = new DataTable();
                 string query2 = "Select SUM(Faulty_quantity) as quantity FROM Faulty_Tools WHERE (Faulty_Tools.Tool_serial_id = '" + serial_id + "') AND Faulty_quantity > 0 Group By (Faulty_Tools.Tool_serial_id) ";
-                SqlDataAdapter adapter2 = await Task.Run(() => new SqlDataAdapter(query2, conn));
+                SQLiteDataAdapter adapter2 = await Task.Run(() => new SQLiteDataAdapter(query2, conn));
                 adapter2.Fill(defective_data);
 
                 if (defective_data.Rows.Count > 0)
@@ -104,7 +104,7 @@ namespace Huber_Management.Controls
 
         private void MenuItem_Delete_Click(object sender, RoutedEventArgs e)
         {
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             string serial_id = this.serial_nb_detail.Text.ToString();
             MessageBoxResult dialogResult = MessageBox.Show("Are you sure that you want to permanently Delete " + serial_id + " from the database ?", "Delete " + serial_id + " ?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (dialogResult == MessageBoxResult.Yes)

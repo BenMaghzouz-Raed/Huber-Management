@@ -150,7 +150,7 @@
                     <!-- Table Rows-->
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Name="latest_history_rows_panel" Orientation="Vertical" CanVerticallyScroll="True" VerticalAlignment="Stretch">
-                            <Label Content="We can't find any history !" Foreground="{StaticResource Label-Gray-Color}" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+                            <TextBlock Name="path_label" Text="We can't find any history !" Foreground="{StaticResource Label-Gray-Color}" HorizontalAlignment="Center" Margin="0 10 0 0"/>
                         </StackPanel>
                     </ScrollViewer>
                 </StackPanel>

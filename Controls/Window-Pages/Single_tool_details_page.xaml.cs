@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,12 +25,12 @@ namespace Huber_Management.Controls
         public Single_tool_details_page(string serial_id)
         {
             InitializeComponent();
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             InitializeData(serial_id, conn);
             Database_c.Get_DB_Connection();
         }
 
-        public async void InitializeData(string serial_id, SqlConnection conn)
+        public async void InitializeData(string serial_id, SQLiteConnection conn)
         {
             DataTable result = await Task.Run(() => Tools_c.Get_by_serial_id(serial_id, conn));
 
@@ -44,10 +44,9 @@ namespace Huber_Management.Controls
 
             // UNIT PRICE EN EURO
             string unit_euro_price = result.Rows[0]["Tool_price"].ToString();
-            decimal price = 0;
-            decimal.TryParse(unit_euro_price, out price);
-            string price_c = price.ToString("C").Remove(0, 1);
-            unit_price.Text = price_c + " €";
+            decimal price = decimal.Parse(unit_euro_price);
+            string price_c = price.ToString("C");
+            unit_price.Text = price_c;
 
             // UNIT PRICE EN DT
             decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
@@ -55,12 +54,12 @@ namespace Huber_Management.Controls
             unit_price.ToolTip = price_dt_c + " DT";
 
             // TOTAL PRICE EN EURO
-            decimal total_price = (int)result.Rows[0]["Tool_actual_stock"] * price;
-            string total_price_c = total_price.ToString("C").Remove(0, 1);
-            this.total_price.Text = total_price_c + " €";
+            decimal total_price = int.Parse(result.Rows[0]["Tool_actual_stock"].ToString()) * price;
+            string total_price_c = total_price.ToString("C");
+            this.total_price.Text = total_price_c;
 
             // TOTAL PRICE EN DT
-            decimal total_price_dt = (int)result.Rows[0]["Tool_actual_stock"] * price * dt_value;
+            decimal total_price_dt = int.Parse(result.Rows[0]["Tool_actual_stock"].ToString()) * price * dt_value;
             string total_price_dt_c = total_price_dt.ToString("C").Remove(0, 1);
             this.total_price.ToolTip = total_price_dt_c + " DT";
 
@@ -84,7 +83,13 @@ namespace Huber_Management.Controls
             int A_value = MainWindow.Default_settings.Criticality_A_value;
             int B_value = MainWindow.Default_settings.Criticality_B_value;
             int C_value = MainWindow.Default_settings.Criticality_C_value;
-            if (criticality_val <= C_value)
+            if(criticality_val == 0)
+            {
+                tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#fff");
+                tool_criticality.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#000");
+                converted_value = "0";
+            }
+            else if (criticality_val <= C_value)
             {
                 tool_criticality.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#005596");
                 converted_value = "C";

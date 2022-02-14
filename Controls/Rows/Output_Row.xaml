@@ -66,6 +66,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
             <!-- id -->
@@ -80,11 +81,11 @@
             <Label x:Name="output_quantity" Grid.Column="4" Content="5" FontWeight="DemiBold"/>
             <TextBlock x:Name="output_requester" Grid.Column="5" Text="Foulen Ben Foulen" VerticalAlignment="Center" MaxWidth="120"
                        Foreground="{StaticResource Label-Gray-Color}" TextTrimming="CharacterEllipsis" TextAlignment="Center"/>
-            <Label x:Name="tools_row_price" Grid.Column="6" Content="271.000" Foreground="{StaticResource Label-Gray-Color}"/>
-            <Label x:Name="tools_row_total" Grid.Column="7" Content="675.500" FontWeight="DemiBold"/>
-            <TextBlock x:Name="output_by" Grid.Column="8" Text="Saif Eddine Hamdi"  VerticalAlignment="Center" MaxWidth="120"
+            <Label x:Name="output_dsi" Grid.Column="6" Content="58964" Foreground="{StaticResource Label-Gray-Color}"/>
+            <Label x:Name="tools_row_price" Grid.Column="7" Content="271.000" Foreground="{StaticResource Label-Gray-Color}"/>
+            <Label x:Name="tools_row_total" Grid.Column="8" Content="675.500" FontWeight="DemiBold"/>
+            <TextBlock x:Name="output_by" Grid.Column="9" Text="Saif Eddine Hamdi"  VerticalAlignment="Center" MaxWidth="120"
                    Foreground="{StaticResource Label-Gray-Color}" TextTrimming="CharacterEllipsis" TextAlignment="Center"/>
-
         </Grid>
     </Border>
 </UserControl>

@@ -87,31 +87,10 @@
                     />
             </Grid>
             
-            <!-- Subtract Checkbox-->
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <!-- Supplier code -->
-                <!--<TextBox  x:Name="supplier_code_add" Margin="0 5 5 5" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12" 
-                          VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Supplier Code"  BorderBrush="{DynamicResource MaterialDesignDivider}"/>-->
-
-                <Grid Grid.Column="1" Margin="5 5 0 5" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Padding="0" Margin="2 0" HorizontalAlignment="Left" Text="Add Repaired quantity to the tool actual stock ?" TextWrapping="Wrap"/>
-                    <RadioButton x:Name="add_toggleButton" Cursor="Hand" Grid.Column="1" HorizontalAlignment="Right"
-                                 Style="{StaticResource MaterialDesignSwitchDarkToggleButton}" IsChecked="False" Margin="15 0 0 0"/>
-                </Grid>
-            </Grid>
-            
             <!-- Comment -->
-            <TextBox x:Name="comment_add" Margin="0 5 0 0" Grid.Row="2" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12"
+            <TextBox x:Name="comment_add" Margin="0 5 0 0" Grid.Row="1" Style="{DynamicResource MaterialDesign_textBox_style}" Padding="12"
                      materialDesign:HintAssist.Hint="Tasks description"  materialDesign:TextFieldAssist.HasTrailingIcon="True" VerticalContentAlignment="Center" VerticalAlignment="Stretch"
-                     materialDesign:TextFieldAssist.TrailingIcon="Comment" TextWrapping="Wrap"  BorderBrush="{DynamicResource MaterialDesignDivider}"/>
+                     materialDesign:TextFieldAssist.TrailingIcon="Comment" TextWrapping="Wrap"  BorderBrush="{DynamicResource MaterialDesignDivider}" Grid.RowSpan="2"/>
         </Grid>
 
     </Grid>

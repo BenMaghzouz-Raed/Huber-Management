@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +31,10 @@ namespace Huber_Management.Pages
         {
 
             // INITIALIZE BY WHO COMBOBOX
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable by_who_table = new DataTable();
             string query = "SELECT DISTINCT(Repaired_by) as results FROM Repaired_Tools";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
             adapter.Fill(by_who_table);
             foreach (DataRow row in by_who_table.Rows)
             {
@@ -52,89 +52,107 @@ namespace Huber_Management.Pages
             quantity.tableHeader_Label.Content = quantity.Tag.ToString();
             total_price.tableHeader_Label.Content = total_price.Tag.ToString();
             repaired_by.tableHeader_Label.Content = repaired_by.Tag.ToString();
-            duration.tableHeader_Label.Content = duration.Tag.ToString();
 
             date.tableHeader_Label.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             serial_id.tableHeader_Label.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             quantity.tableHeader_Label.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             total_price.tableHeader_Label.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             repaired_by.tableHeader_Label.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
-            duration.tableHeader_Label.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
 
             date.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             serial_id.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             quantity.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             total_price.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             repaired_by.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
-            duration.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
+            
+            // PRIVILEGES
+            if (!MainWindow.Connected_user.canRepair)
+            {
+                Add_repaired_tool.IsEnabled = false;
+            }
 
             InitializeAllData();
         }
         public Controls.TableHeader_RadioBtn Selected_sort_by { get; set; } = null;
 
-        public async void InitializeAllData(string when = "", string who = "", string filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
+        public async void InitializeAllData(string when = "", string who = "", string text_search_filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
         {
             if (LoadingIcon != null && DataScrollViewer != null)
             {
                 LoadingIcon.Visibility = Visibility.Visible;
+                noDataFound.Visibility = Visibility.Collapsed;
                 DataScrollViewer.Visibility = Visibility.Collapsed;
             }
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable all_data = new DataTable();
 
             string query = "Select * FROM Repaired_Tools LEFT JOIN Tools ON (Repaired_Tools.Tool_serial_id = Tools.Tool_serial_id) ";
 
+
             // FILTER CONVERTER
-            switch (filter)
+            switch (text_search_filter)
             {
                 case "Serial Number":
-                    filter = "Repaired_Tools.Tool_serial_id";
+                    text_search_filter = "Repaired_Tools.Tool_serial_id";
                     break;
                 case "Drawing":
-                    filter = "Tool_drawing";
+                    text_search_filter = "Tool_drawing";
                     break;
                 case "Supplier":
-                    filter = "Tool_supplier";
+                    text_search_filter = "Tool_supplier";
                     break;
                 case "Position":
-                    filter = "Tool_position";
+                    text_search_filter = "Tool_position";
+                    break;
+                case "Project":
+                    text_search_filter = "Tool_project";
+                    break;
+                case "Process":
+                    text_search_filter = "Tool_process";
+                    break;
+                case "Division":
+                    text_search_filter = "Tool_division";
+                    break;
+                case "Supplier Code":
+                    text_search_filter = "Tool_supplier_code";
                     break;
                 default:
-                    filter = "Repaired_Tools.Tool_serial_id";
+                    text_search_filter = "Repaired_Tools.Tool_serial_id";
                     break;
             }
-
             // SEARCH CONVERTER
             if (_search_text != "" && _search_text.Length > 0)
             {
-                query += " WHERE " + filter + " LIKE '%" + _search_text + "%' ";
-            }
-            else
-            {
-                query += " WHERE Repaired_Tools.Tool_serial_id LIKE '%%' ";
+                query += " WHERE " + text_search_filter + " LIKE '%" + _search_text + "%' ";
             }
 
             // WHEN CONVERTER
+            string date = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+            string[] YearMonth = date.Split("-");
+            string thisMonth = YearMonth[0] + "-" + YearMonth[1];
             switch (when)
             {
                 case "This Month":
-                    when = " AND ( MONTH(repaired_date)=MONTH(GETDATE()) and YEAR(repaired_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', repaired_date) = '" + thisMonth + "' ";
                     break;
                 case "Last Month":
-                    when = " AND ( MONTH(repaired_date)<=( MONTH(GETDATE()) - 1 ) and YEAR(repaired_date)=YEAR(GETDATE()) ) ";
+                    int lastMonth = int.Parse(YearMonth[1]) - 1;
+                    string last_month = lastMonth < 10 ? "0" + lastMonth.ToString() : lastMonth.ToString();
+                    when = " AND strftime('%Y-%m', repaired_date) = '" + YearMonth[0] + "-" + last_month + "' ";
                     break;
                 case "Last Year":
-                    when = " AND ( YEAR(repaired_date)=(YEAR(GETDATE()) - 1) ) ";
+                    int lastYear = int.Parse(YearMonth[0]) - 1;
+                    when = " AND strftime('%Y', repaired_date) = '" + lastYear.ToString() + "' ";
                     break;
                 case "This Year":
-                    when = " AND ( YEAR(repaired_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y', repaired_date) = '" + YearMonth[0] + "' ";
                     break;
                 case "All":
                     when = "";
                     break;
                 default:
-                    when = " AND ( MONTH(repaired_date)=MONTH(GETDATE()) and YEAR(repaired_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', repaired_date) = '" + thisMonth + "' ";
                     break;
             }
             query += when;
@@ -180,10 +198,10 @@ namespace Huber_Management.Pages
             // EXECUTE QUERY
             try
             {
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                 adapter.Fill(all_data);
-
-                if (Repaired_rows_panel != null && all_data.Rows.Count > 0)
+                // EXECUTE QUERY
+                if (all_data.Rows.Count > 0 && this.Repaired_rows_panel != null)
                 {
                     Repaired_rows_panel.Children.Clear();
                     foreach (DataRow row in all_data.Rows)
@@ -217,26 +235,25 @@ namespace Huber_Management.Pages
                             );
                         Repaired_rows_panel.Children.Add(new_repaired_row);
                     }
+                    if (LoadingIcon != null)
+                    {
+                        LoadingIcon.Visibility = Visibility.Collapsed;
+                        DataScrollViewer.Visibility = Visibility.Visible;
+                        noDataFound.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
-                    Repaired_rows_panel.Children.Clear();
-                    Repaired_rows_panel.Children.Add(this.noDataFound);
+                    noDataFound.Visibility = Visibility.Visible;
+                    DataScrollViewer.Visibility = Visibility.Collapsed;
+                    LoadingIcon.Visibility = Visibility.Collapsed;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
             Database_c.Close_DB_Connection();
-
-            if (LoadingIcon != null && DataScrollViewer != null)
-            {
-                LoadingIcon.Visibility = Visibility.Collapsed;
-                DataScrollViewer.Visibility = Visibility.Visible;
-            }
-
         }
 
         private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)

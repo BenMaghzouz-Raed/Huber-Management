@@ -31,6 +31,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
@@ -40,9 +41,13 @@
                 <TextBlock x:Name="project_detail" Grid.Row="1" Text="no project"
                                FontSize="14" VerticalAlignment="Center"/>
 
-                <TextBlock x:Name="designation_detail" Grid.Row="2" Grid.RowSpan="2" Text="no designation"
+                <TextBlock x:Name="designation_detail" Grid.Row="2" Text="no designation"
                                FontSize="12" FontWeight="Light" Foreground="{StaticResource Label-Gray-Color}"
                                TextWrapping="WrapWithOverflow"/>
+                
+                <TextBlock x:Name="actual_stock_detail" Grid.Row="3" Padding="10 5" ToolTip="Actual Stock" Margin="0 0 20 0" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                           Text="0 Available" Background="{StaticResource Soft-green-Color}"
+                            FontWeight="DemiBold" FontSize="16" Foreground="{StaticResource Success-green-Color}"/>
             </Grid>
         </Grid>
 
@@ -95,8 +100,8 @@
                      materialDesign:HintAssist.Hint="Price en €" VerticalContentAlignment="Center"  BorderBrush="{DynamicResource MaterialDesignDivider}"
                     />
                 <!-- Date -->
-                <TextBox x:Name="date_add" Margin="5 5 0 5" Grid.Column="1" Style="{DynamicResource textBoxInputStyle}" Padding="12" materialDesign:TextFieldAssist.LeadingIcon="Calendar"
-                     materialDesign:HintAssist.Hint="Date" materialDesign:TextFieldAssist.HasLeadingIcon="True" VerticalContentAlignment="Center"  BorderBrush="{DynamicResource MaterialDesignDivider}"
+                <TextBox x:Name="dsi_add" Margin="5 5 0 5" Grid.Column="1" Style="{DynamicResource textBoxInputStyle}" Padding="12"
+                     materialDesign:HintAssist.Hint="DSI" VerticalContentAlignment="Center"  BorderBrush="{DynamicResource MaterialDesignDivider}"
                          />
             </Grid>
 

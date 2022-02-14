@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,19 +45,17 @@ namespace Huber_Management.Controls
             reception_quantity.Content = Reception.Transaction_quantity;
             tools_row_supplier.Content = Tool.Tool_supplier;
 
-            decimal price = 0;
-            decimal.TryParse(Tool.Tool_price.ToString(), out price);
-            string price_c = price.ToString("C").Remove(0, 1);
+            string price_c = Tool.Tool_price.ToString("C");
 
-            decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
-            string price_dt_c = (price*dt_value).ToString("C").Remove(0, 1);
-            tools_row_price.Content = price_c + " €";
+            decimal dt_value = MainWindow.Default_settings == null ? decimal.Parse("3.25") : MainWindow.Default_settings.Euro_to_dt_value;
+            string price_dt_c = (Tool.Tool_price * dt_value).ToString("C").Remove(0, 1);
+            tools_row_price.Content = price_c;
             tools_row_price.ToolTip = price_dt_c + " DT";
 
-            decimal total_price = (decimal)( price * (int)Reception.Transaction_quantity);
-            string total_price_c = total_price.ToString("C").Remove(0, 1);
+            decimal total_price = (decimal)(Tool.Tool_price * int.Parse(Reception.Transaction_quantity.ToString()) );
+            string total_price_c = total_price.ToString("C");
             string total_price_dt_c = (total_price*dt_value).ToString("C").Remove(0, 1);
-            tools_row_total.Content = total_price_c + " €";
+            tools_row_total.Content = total_price_c;
             tools_row_total.ToolTip = total_price_dt_c + " DT";
 
             reception_by.Text = Reception.Transaction_by;
@@ -94,7 +92,7 @@ namespace Huber_Management.Controls
             MessageBoxResult dialogResult = MessageBox.Show("Are you sure you want to Cancel this transaction for " + serial_id + " ?", "Cancel Transaction", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (dialogResult == MessageBoxResult.OK)
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
 
                 try
                 {
@@ -107,24 +105,23 @@ namespace Huber_Management.Controls
                     if(actual_stock >= quantity)
                     {
                         string Query = "Delete FROM Transactions WHERE (Transaction_id = @reception_id) AND (Transaction_tool_serial_id = @serial_id)";
-                        SqlCommand command = new SqlCommand(Query, conn);
-                        command.Parameters.Add(new SqlParameter("@serial_id", serial_id));
-                        command.Parameters.Add(new SqlParameter("@reception_id", reception_id));
+                        SQLiteCommand command = new SQLiteCommand(Query, conn);
+                        command.Parameters.AddWithValue("@serial_id", serial_id);
+                        command.Parameters.AddWithValue("@reception_id", reception_id);
                         command.ExecuteNonQuery();
                         
                         string Updatequery = "UPDATE Tools SET Tool_actual_stock = Tool_actual_stock - @Transaction_quantity WHERE Tool_serial_id = @Tool_serial_id";
-                        SqlCommand command2 = new SqlCommand(Updatequery, conn);
-                        command2.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
-                        command2.Parameters.Add(new SqlParameter("@Transaction_quantity", quantity));
+                        SQLiteCommand command2 = new SQLiteCommand(Updatequery, conn);
+                        command2.Parameters.AddWithValue("@Tool_serial_id", serial_id);
+                        command2.Parameters.AddWithValue("@Transaction_quantity", quantity);
 
                         await Task.Run(() => command2.ExecuteNonQuery());
                     }
                     else
                     {
                         MessageBox.Show("Sorry we can't cancel this transaction for " + serial_id + "! You need to cancel other transactions first", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                        return;
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -133,6 +130,7 @@ namespace Huber_Management.Controls
                     return;
                 }
                 Database_c.Close_DB_Connection();
+                MainWindow._Reception_page.InitializeAllData_Filters_Function();
             }
         }
 

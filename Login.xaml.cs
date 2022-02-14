@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 
 namespace Huber_Management
 {
@@ -33,38 +33,44 @@ namespace Huber_Management
             }
             else
             {
-                if (pass_input != Result.Rows[0]["User_password"].ToString())
-                {
-                    // CREATE AN ERROR
-                    MessageBox.Show("Wrong Password ! please try again", "wrong password", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {   // CREATE A SUCCESS
-                    SqlConnection conn = Database_c.Get_DB_Connection();
+                if (pass_input == Result.Rows[0]["User_password"].ToString())
+                {            
+                    // CREATE A SUCCESS
+
+                    SQLiteConnection conn = Database_c.Get_DB_Connection();
                     string UpdateQuery = "UPDATE Users SET isConnected = 1 WHERE User_name = @User_name ";
 
-                    SqlCommand command = new SqlCommand(UpdateQuery, conn);
-                    command.Parameters.Add(new SqlParameter("@User_name", user_input));
+                    SQLiteCommand command = new SQLiteCommand(UpdateQuery, conn);
+                    command.Parameters.AddWithValue("@User_name", user_input);
                     command.ExecuteNonQuery();
 
                     // SELECT CONNECTED USER INFORMATIONS
                     string Selectquery = "SELECT * FROM Users, Privileges WHERE User_name = '" + user_input + "' AND Users.Privileges_id = Privileges.Privilege_name ";
                     DataTable table = new DataTable();
-                    SqlDataAdapter adapter = new SqlDataAdapter(Selectquery, conn);
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(Selectquery, conn);
                     adapter.Fill(table);
 
+                    int isAdmin = int.Parse(table.Rows[0]["IsAdmin"].ToString());
+                    int canDelete = int.Parse(table.Rows[0]["canDelete"].ToString());
+                    int canEdit = int.Parse(table.Rows[0]["canEdit"].ToString());
+                    int canAdd = int.Parse(table.Rows[0]["canAdd"].ToString());
+                    int canReception = int.Parse(table.Rows[0]["canReception"].ToString());
+                    int canCheckout = int.Parse(table.Rows[0]["canCheckout"].ToString());
+                    int canPurchaseOrder = int.Parse(table.Rows[0]["canPurchaseOrder"].ToString());
+                    int canRepair = int.Parse(table.Rows[0]["canRepair"].ToString());
                     users_c connected_user = new users_c
                     {
                         user_name = table.Rows[0]["User_name"].ToString(),
                         user_fullName = table.Rows[0]["User_fullname"].ToString(),
                         privileges_id = table.Rows[0]["Privileges_id"].ToString(),
-                        IsAdmin = bool.Parse(table.Rows[0]["IsAdmin"].ToString()),
-                        canDelete = bool.Parse(table.Rows[0]["canDelete"].ToString()),
-                        canEdit = bool.Parse(table.Rows[0]["canEdit"].ToString()),
-                        canAdd = bool.Parse(table.Rows[0]["canAdd"].ToString()),
-                        canReception = bool.Parse(table.Rows[0]["canReception"].ToString()),
-                        canCheckout = bool.Parse(table.Rows[0]["canCheckout"].ToString()),
-                        canPurchaseOrder = bool.Parse(table.Rows[0]["canPurchaseOrder"].ToString()),
+                        IsAdmin = isAdmin == 1 ? true : false,
+                        canDelete = canDelete == 1 ? true : false,
+                        canEdit = canEdit == 1 ? true : false,
+                        canAdd = canAdd == 1 ? true : false,
+                        canReception = canReception == 1 ? true : false,
+                        canCheckout = canCheckout == 1 ? true : false,
+                        canPurchaseOrder = canPurchaseOrder == 1 ? true : false,
+                        canRepair = canRepair == 1 ? true : false,
                     };
 
                     MainWindow MainWindow = new MainWindow();
@@ -73,7 +79,11 @@ namespace Huber_Management
 
                     Database_c.Close_DB_Connection();
                     this.Close();
-
+                 }
+                else
+                {   
+                    // CREATE AN ERROR
+                    MessageBox.Show("Wrong Password ! please try again", "wrong password", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }

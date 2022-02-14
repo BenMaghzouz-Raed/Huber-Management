@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 
@@ -41,11 +41,11 @@ namespace Huber_Management.Controls
 
             decimal price = 0;
             decimal.TryParse(((out_of_stock_tool.Tool_stock_mini - out_of_stock_tool.Tool_actual_stock) * out_of_stock_tool.Tool_price).ToString(), out price);
-            string price_c = price.ToString("C").Remove(0, 1);
+            string price_c = price.ToString("C");
 
             decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
             string price_dt_c = (price * dt_value).ToString("C").Remove(0, 1);
-            tools_row_total_nq.Content = price_c + " €";
+            tools_row_total_nq.Content = price_c;
             tools_row_total_nq.ToolTip = price_dt_c + " DT";
 
             tools_row_supplier.Content = out_of_stock_tool.Tool_supplier;
@@ -71,17 +71,6 @@ namespace Huber_Management.Controls
             tool_details.Show();
         }
 
-        private void MenuItem_Delete_Click(object sender, RoutedEventArgs e)
-        {
-            SqlConnection conn = Database_c.Get_DB_Connection();
-            string serial_id = this.tools_row_serial_id.Content.ToString();
-            MessageBoxResult dialogResult = MessageBox.Show("Are u sur you want to Delete " + serial_id + " from the database ?", "Delete", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-            if (dialogResult == MessageBoxResult.OK)
-            {
-                Tools_c.Delete_by_serial_id(serial_id, conn);
-            }
-            Database_c.Close_DB_Connection();
-        }
 
         private void MenuItem_viewImage_Click(object sender, RoutedEventArgs e)
         {

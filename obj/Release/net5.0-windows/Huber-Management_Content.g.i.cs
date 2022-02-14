@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("database/local-db_log.ldf")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("bin/release/net5.0-windows/huber-management.deps.json")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("bin/release/net5.0-windows/huber-management.runtimeconfig.dev.json")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("bin/release/net5.0-windows/huber-management.runtimeconfig.json")]
 
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +34,7 @@ namespace Huber_Management.Controls
         /// <param name="e"></param>
         private async void Add_new_user_Click(object sender, RoutedEventArgs e)
         {
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             string userName = string.Join(" ", user_name_add.Text.ToString().Split().Where(x => x != ""));
 
             if (userName == "")
@@ -74,23 +74,21 @@ namespace Huber_Management.Controls
                         try
                         {
                             // Add user to Users database
-                            string Query = "SET ANSI_WARNINGS OFF " +
-                                           "INSERT INTO Users (User_name, User_fullname, User_password, IsAdmin, Privileges_id) " +
-                                           "VALUES (@User_name, @User_fullname, @User_password, @IsAdmin, @Privileges_id) " +
-                                           "SET ANSI_WARNINGS ON";
+                            string Query = "INSERT INTO Users (User_name, User_fullname, User_password, IsAdmin, Privileges_id, User_added_date, last_login) " +
+                                           "VALUES (@User_name, @User_fullname, @User_password, @IsAdmin, @Privileges_id, DATETIME('now', 'localtime'), DATETIME('now', 'localtime') )";
 
-                            SqlCommand command = new SqlCommand(Query, conn);
+                            SQLiteCommand command = new SQLiteCommand(Query, conn);
 
-                            command.Parameters.Add(new SqlParameter("@User_name", userName));
+                            command.Parameters.AddWithValue("@User_name", userName);
 
-                            command.Parameters.Add(new SqlParameter("@User_fullname", full_name_add.Text.ToString()));
+                            command.Parameters.AddWithValue("@User_fullname", full_name_add.Text.ToString());
 
-                            command.Parameters.Add(new SqlParameter("@User_password", password_add.Password.ToString()));
+                            command.Parameters.AddWithValue("@User_password", password_add.Password.ToString());
 
                             bool isAdmin = SelectedPrivilege == "Admin";
-                            command.Parameters.Add(new SqlParameter("@IsAdmin", isAdmin));
+                            command.Parameters.AddWithValue("@IsAdmin", isAdmin);
 
-                            command.Parameters.Add(new SqlParameter("@Privileges_id", SelectedPrivilege));
+                            command.Parameters.AddWithValue("@Privileges_id", SelectedPrivilege);
 
                             await Task.Run(() => command.ExecuteNonQuery());
                         }
@@ -100,12 +98,12 @@ namespace Huber_Management.Controls
                             Database_c.Close_DB_Connection();
                             return;
                         }
-                        finally
-                        {
-                            Database_c.Close_DB_Connection();
-                            
-                        }
+                        Database_c.Close_DB_Connection();
                         MessageBox.Show(SelectedPrivilege + " Account with the UserName: '" + userName + "' Created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        if (MainWindow._Settings_page != null)
+                        {
+                            MainWindow._Settings_page.NavigationService.Refresh();
+                        }
                         this.Close();
                     }
 

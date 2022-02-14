@@ -48,17 +48,17 @@ namespace Huber_Management.Controls
             // CONVERT PRICE
             decimal price = 0;
             decimal.TryParse(history_price, out price);
-            string price_c = price.ToString("C").Remove(0, 1);
-            this.history_price.Content = price_c + " €";
+            string price_c = price.ToString("C");
+            this.history_price.Content = price_c;
             decimal dt_value = MainWindow.Default_settings == null ? (decimal)3.25 : MainWindow.Default_settings.Euro_to_dt_value;
             string price_dt_c = (price * dt_value).ToString("C").Remove(0, 1);
             this.history_price.ToolTip = price_dt_c + " DT";
 
             // CONVERT TOTAL PRICE
             decimal total_price = (decimal)(price * int.Parse(history_quantity) );
-            string total_price_c = total_price.ToString("C").Remove(0, 1);
+            string total_price_c = total_price.ToString("C");
             string total_price_dt_c = (total_price * dt_value).ToString("C").Remove(0, 1);
-            this.history_total_price.Content = total_price_c + " €";
+            this.history_total_price.Content = total_price_c;
             this.history_total_price.ToolTip = total_price_dt_c + " DT";
 
             if (history_type == "OUT")

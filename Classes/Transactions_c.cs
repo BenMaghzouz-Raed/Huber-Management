@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,25 +15,26 @@ namespace Huber_Management
         public int Transaction_quantity { get; set; }
         public string Transaction_tool_serial_id { get; set; }
         public string Transaction_type { get; set; }
-        public string Transaction_req_prov { get; set; } = "";
+        public string Output_requester { get; set; } = "";
+        public string Output_DSI { get; set; } = "-";
         public string Transaction_by { get; set; }
         public string Transaction_comment { get; set; }
         public string Transaction_date { get; set; }
 
-        public static DataTable Get_all(SqlConnection con)
+        public static DataTable Get_all(SQLiteConnection con)
         {
             DataTable table = new DataTable();
 
             string Query = "SELECT * FROM Transactions Order by Transaction_date DESC ";
 
-            SqlDataAdapter adapter = new SqlDataAdapter(Query, con);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(Query, con);
             adapter.Fill(table);
 
             return table;
         }
 
         // Add Reception 
-        public static bool Add_single_Transaction(Transactions_c Transaction, SqlConnection con)
+        public static bool Add_single_Transaction(Transactions_c Transaction, SQLiteConnection con)
         {
             bool isAdded = false;
             DataTable table = new DataTable();
@@ -43,28 +44,31 @@ namespace Huber_Management
             DateTime Transaction_date = DateTime.ParseExact(date, "MM/dd/yyyy HH:mm:ss", null);
 
             string Query = "INSERT INTO Transactions (Transaction_quantity, Transaction_tool_serial_id, Transaction_type," +
-                " Transaction_req_prov, Transaction_by, Transaction_comment, Transaction_date)" +
+                " Output_requester, Output_DSI, Transaction_by, Transaction_comment, Transaction_date)" +
                 "VALUES (@Transaction_quantity, @Transaction_tool_serial_id, @Transaction_type, " +
-                "@Transaction_req_prov, @Transaction_by, @Transaction_comment, @Transaction_date)";
+                "@Output_requester, @Output_DSI, @Transaction_by, @Transaction_comment, @Transaction_date)";
 
-            SqlCommand command = new SqlCommand(Query, con);
-            command.Parameters.Add(new SqlParameter("@Transaction_quantity", Transaction.Transaction_quantity));
+            SQLiteCommand command = new SQLiteCommand(Query, con);
+            command.Parameters.AddWithValue("@Transaction_quantity", Transaction.Transaction_quantity);
 
-            command.Parameters.Add(new SqlParameter("@Transaction_type", Transaction.Transaction_type));
+            command.Parameters.AddWithValue("@Transaction_type", Transaction.Transaction_type);
 
             string transaction_tool_serial_id = string.Join(" ", Transaction.Transaction_tool_serial_id.ToString().Split().Where(x => x != ""));
-            command.Parameters.Add(new SqlParameter("@Transaction_tool_serial_id", transaction_tool_serial_id));
+            command.Parameters.AddWithValue("@Transaction_tool_serial_id", transaction_tool_serial_id);
 
-            string transaction_req_prov = string.Join(" ", Transaction.Transaction_req_prov.ToString().Split().Where(x => x != ""));
-            command.Parameters.Add(new SqlParameter("@Transaction_req_prov", transaction_req_prov));
+            string Output_requester = string.Join(" ", Transaction.Output_requester.ToString().Split().Where(x => x != ""));
+            command.Parameters.AddWithValue("@Output_requester", Output_requester);
+
+            string Output_dsi = string.Join(" ", Transaction.Output_DSI.ToString().Split().Where(x => x != ""));
+            command.Parameters.AddWithValue("@Output_DSI", Output_dsi);
 
             string transaction_by = string.Join(" ", Transaction.Transaction_by.ToString().Split().Where(x => x != ""));
-            command.Parameters.Add(new SqlParameter("@Transaction_by", transaction_by));
+            command.Parameters.AddWithValue("@Transaction_by", transaction_by);
 
             string transaction_comment = string.Join(" ", Transaction.Transaction_comment.ToString().Split().Where(x => x != ""));
-            command.Parameters.Add(new SqlParameter("@Transaction_comment", transaction_comment));
+            command.Parameters.AddWithValue("@Transaction_comment", transaction_comment);
 
-            command.Parameters.Add(new SqlParameter("@Transaction_date", Transaction_date));
+            command.Parameters.AddWithValue("@Transaction_date", Transaction_date);
 
             command.ExecuteNonQuery();
 
@@ -73,35 +77,17 @@ namespace Huber_Management
             return isAdded;
         }
 
-        public static bool Delete_all(SqlConnection con)
-        {
-            bool deleted = false;
-            try
-            {
-                string Query = "Delete FROM Transactions";
-                SqlCommand command = new SqlCommand(Query, con);
-                command.ExecuteNonQuery();
-                deleted = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            return deleted;
-        }
-
-        public static async void Get_all_Receptions(SqlConnection con)
+        public static async void Get_all_Receptions(SQLiteConnection con)
         {
             string Query = "SELECT * FROM Transactions WHERE Transaction_type = 'IN' DESC";
-            SqlCommand command = new SqlCommand(Query, con);
+            SQLiteCommand command = new SQLiteCommand(Query, con);
             await Task.Run(() => command.ExecuteNonQuery());
         }
 
-        public static async void Get_all_Output(SqlConnection con)
+        public static async void Get_all_Output(SQLiteConnection con)
         {
             string Query = "SELECT * FROM Transactions WHERE Transaction_type = 'OUT' DESC";
-            SqlCommand command = new SqlCommand(Query, con);
+            SQLiteCommand command = new SQLiteCommand(Query, con);
             await Task.Run(() => command.ExecuteNonQuery());
         }
     }

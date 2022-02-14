@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace Huber_Management.Controls
         {
             InitializeComponent();
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             if(serial_nb_detail != null)
             {
                 DataTable result = Tools_c.Get_by_serial_id(serial_nb_detail, conn);
@@ -48,13 +48,13 @@ namespace Huber_Management.Controls
             string _search_text = ((TextBox)search_for_tools_to_add).Text.ToString();
             if (_search_text.Length > 0)
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 DataTable result = new DataTable();
                 // Create the Query
-                string query = "Select top 5 * FROM Tools WHERE (Tool_serial_id LIKE '%" + _search_text + "%') ORDER By Tool_serial_id";
+                string query = "SELECT * FROM Tools WHERE (Tool_serial_id LIKE '%" + _search_text + "%') ORDER By Tool_serial_id LIMIT 5";
                 // Execute the Query 
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
-                await Task.Run(() => adapter.Fill(result));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
+                adapter.Fill(result);
                 if (result.Rows.Count > 0)
                 {
                     searched_rows_panel.Children.Clear();
@@ -66,12 +66,13 @@ namespace Huber_Management.Controls
                             row["Tool_designation"].ToString()));
                     }
                     searched_result.Visibility = Visibility.Visible;
-                    Database_c.Close_DB_Connection();
                 }
                 else
                 {
                     searched_result.Visibility = Visibility.Collapsed;
                 }
+
+                Database_c.Close_DB_Connection();
             }
 
         }

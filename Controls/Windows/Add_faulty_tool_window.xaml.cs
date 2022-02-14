@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,7 +87,7 @@ namespace Huber_Management.Controls
                 }
                 if (selected_serial_id != "")
                 {
-                    SqlConnection conn = Database_c.Get_DB_Connection();
+                    SQLiteConnection conn = Database_c.Get_DB_Connection();
                     DataTable result = await Task.Run(() => Tools_c.Get_by_serial_id(selected_serial_id, conn));
                     faulty_tool = new Tools_c();
 
@@ -156,41 +156,35 @@ namespace Huber_Management.Controls
         {
             if (new_faulty.quantity_add.Text.ToString() != "")
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 string serial_id = new_faulty.serial_nb_detail.Text.ToString();
                 bool exist = Tools_c.isExist_serial_id(serial_id, conn);
 
-                string query = "INSERT INTO Faulty_Tools (Tool_serial_id, causes, Faulty_quantity, Faulty_by) " +
-                "Values(@Tool_serial_id, @causes, @Faulty_quantity, 'Saif Eddine Hamdi')";
+                string query = "INSERT INTO Faulty_Tools (Tool_serial_id, causes, Faulty_quantity, Faulty_by, added_date) " +
+                "Values(@Tool_serial_id, @causes, @Faulty_quantity, @Faulty_by, DATETIME('now', 'localtime'))";
 
-                SqlCommand command = new SqlCommand(query, conn);
-                command.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
+                SQLiteCommand command = new SQLiteCommand(query, conn);
+                command.Parameters.AddWithValue("@Tool_serial_id", serial_id);
 
                 int quantity = 0;
                 int.TryParse(new_faulty.quantity_add.Text.ToString(), out quantity);
-                command.Parameters.Add(new SqlParameter("@Faulty_quantity", quantity));
+                command.Parameters.AddWithValue("@Faulty_quantity", quantity);
 
                 decimal price = 0;
                 decimal.TryParse(new_faulty.price_add.Text.ToString(), out price);
 
-                command.Parameters.Add(new SqlParameter("@causes", new_faulty.comment_add.Text.ToString()));
+                command.Parameters.AddWithValue("@Faulty_by", MainWindow.Connected_user.user_fullName.ToString());
+                command.Parameters.AddWithValue("@causes", new_faulty.comment_add.Text.ToString());
                 await Task.Run(() => command.ExecuteNonQuery());
 
                 if (exist)  // CONFIRMATION BY SEARCH PAGE
                 {
                     string Updatequery = "UPDATE Tools SET Tool_price = @Tool_price, Tool_supplier_code = @Tool_supplier_Code WHERE Tool_serial_id = @Tool_serial_id";
 
-                    // Update Actual Stock 
-                    if (((RadioButton)new_faulty.subtract_toggleButton).IsChecked.Value)
-                    {
-                        Updatequery = "UPDATE Tools SET Tool_actual_stock = Tool_actual_stock - " + quantity + ", Tool_price = @Tool_price, Tool_supplier_code = @Tool_supplier_Code WHERE Tool_serial_id = @Tool_serial_id";
-                        //command2.Parameters.Add(new SqlParameter("@Faulty_quantity", quantity));
-                    }
-
-                    SqlCommand command2 = new SqlCommand(Updatequery, conn);
-                    command2.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
-                    command2.Parameters.Add(new SqlParameter("@Tool_price", price));
-                    command2.Parameters.Add(new SqlParameter("@Tool_supplier_Code", new_faulty.supplier_code_add.Text.ToString()));
+                    SQLiteCommand command2 = new SQLiteCommand(Updatequery, conn);
+                    command2.Parameters.AddWithValue("@Tool_serial_id", serial_id);
+                    command2.Parameters.AddWithValue("@Tool_price", price);
+                    command2.Parameters.AddWithValue("@Tool_supplier_Code", new_faulty.supplier_code_add.Text.ToString());
                     await Task.Run(() => command2.ExecuteNonQuery());
                 }
                 else // CONFIRMATION BY ADD NEW PAGE
@@ -204,6 +198,7 @@ namespace Huber_Management.Controls
 
                 Database_c.Close_DB_Connection();
                 MessageBox.Show( quantity + " Tool(s) with the Serial Number = '" + serial_id + "' added to Defective tools ! Please reload the page", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MainWindow._Faulty_Tools_page.NavigationService.Refresh();
                 this.Close();
             }
             else
@@ -217,7 +212,7 @@ namespace Huber_Management.Controls
             string serial_id = new_tool.Serial_nb_add.Text.ToString();
             if (serial_id != "")
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 bool exist = Tools_c.isExist_serial_id(serial_id, conn);
                 if (exist)
                 {

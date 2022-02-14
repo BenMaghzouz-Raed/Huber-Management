@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,12 +64,12 @@ namespace Huber_Management.Controls
                     {
                         selected_serial_id = row.tool_serial_id.Content.ToString();
                         faulty_id = row.defective_id.Content.ToString();
-                        faulty_quantity = row.defective_quantity.ToString();
+                        faulty_quantity = row.defective_quantity.Content.ToString();
                     }
                 }
                 if (selected_serial_id != "" && faulty_id != "")
                 {
-                    SqlConnection conn = Database_c.Get_DB_Connection();
+                    SQLiteConnection conn = Database_c.Get_DB_Connection();
                     DataTable result = await Task.Run(() => Tools_c.Get_by_serial_id(selected_serial_id, conn));
                     repaired_tool = new Tools_c();
 
@@ -116,7 +116,7 @@ namespace Huber_Management.Controls
 
         private async void confirm_btn_Click(object sender, RoutedEventArgs e)
         {
-            if (new_repaired.Repaired_quantity.Text.ToString() != "")
+            if (new_repaired.Repaired_quantity.Text.ToString() == "")
             {
                 MessageBox.Show("The quantity field is empty!", "Message", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -128,26 +128,27 @@ namespace Huber_Management.Controls
             }
             else
             {
-                SqlConnection conn = Database_c.Get_DB_Connection();
+                SQLiteConnection conn = Database_c.Get_DB_Connection();
                 string serial_id = new_repaired.serial_nb_detail.Text.ToString();
                 bool exist = Tools_c.isExist_serial_id(serial_id, conn);
 
                 // ADD TO REPAIRED TOOLS
-                string query = "INSERT INTO Repaired_Tools (Tool_serial_id, Tasks_description, Repaired_quantity, Faulty_tools_id, Repaired_by) " +
-                "Values(@Tool_serial_id, @Tasks_description, @Repaired_quantity, @Faulty_tools_id, 'Saif Eddine Hamdi')";
+                string query = "INSERT INTO Repaired_Tools (Tool_serial_id, Tasks_description, Repaired_quantity, Faulty_tools_id, Repaired_by, Repaired_date) " +
+                "Values(@Tool_serial_id, @Tasks_description, @Repaired_quantity, @Faulty_tools_id, @Repaired_by, DATETIME('now', 'localtime'))";
 
-                SqlCommand command = new SqlCommand(query, conn);
-                command.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
+                SQLiteCommand command = new SQLiteCommand(query, conn);
+                command.Parameters.AddWithValue("@Tool_serial_id", serial_id);
 
                 int quantity = 0;
                 int.TryParse(new_repaired.Repaired_quantity.Text.ToString(), out quantity);
-                command.Parameters.Add(new SqlParameter("@Repaired_quantity", quantity));
+                command.Parameters.AddWithValue("@Repaired_quantity", quantity);
 
                 decimal price = 0;
                 decimal.TryParse(new_repaired.price_add.Text.ToString(), out price);
 
-                command.Parameters.Add(new SqlParameter("@Tasks_description", new_repaired.comment_add.Text.ToString()));
-                command.Parameters.Add(new SqlParameter("@Faulty_tools_id", new_repaired.faulty_serial_id.Text.ToString()));
+                command.Parameters.AddWithValue("@Repaired_by", MainWindow.Connected_user.user_fullName.ToString());
+                command.Parameters.AddWithValue("@Tasks_description", new_repaired.comment_add.Text.ToString());
+                command.Parameters.AddWithValue("@Faulty_tools_id", new_repaired.faulty_serial_id.Text.ToString());
                 await Task.Run(() => command.ExecuteNonQuery());
 
                 // UPDATE TOOLS INFORMATION
@@ -155,16 +156,9 @@ namespace Huber_Management.Controls
                 {
                     string Updatequery = "UPDATE Tools SET Tool_price = @Tool_price WHERE Tool_serial_id = @Tool_serial_id";
 
-                    // Update Actual Stock 
-                    if (((RadioButton)new_repaired.add_toggleButton).IsChecked.Value)
-                    {
-                        Updatequery = "UPDATE Tools SET Tool_actual_stock = Tool_actual_stock + " + quantity + ", Tool_price = @Tool_price WHERE Tool_serial_id = @Tool_serial_id";
-                        //command2.Parameters.Add(new SqlParameter("@Faulty_quantity", quantity));
-                    }
-
-                    SqlCommand command2 = new SqlCommand(Updatequery, conn);
-                    command2.Parameters.Add(new SqlParameter("@Tool_serial_id", serial_id));
-                    command2.Parameters.Add(new SqlParameter("@Tool_price", price));
+                    SQLiteCommand command2 = new SQLiteCommand(Updatequery, conn);
+                    command2.Parameters.AddWithValue("@Tool_serial_id", serial_id);
+                    command2.Parameters.AddWithValue("@Tool_price", price);
                     await Task.Run(() => command2.ExecuteNonQuery());
                 }
                 else // TOOL DOES NOT EXIST
@@ -175,14 +169,22 @@ namespace Huber_Management.Controls
 
                 // SUBTRACT REPAIRED QUANTITY FROM FAULTY TOOLS
                 string UpdateFaulty = "UPDATE Faulty_Tools SET Faulty_quantity = Faulty_quantity - " + quantity + " WHERE Faulty_tool_id = @Faulty_tool_id ";
-                SqlCommand command3 = new SqlCommand(UpdateFaulty, conn);
-                command3.Parameters.Add(new SqlParameter("@Faulty_tool_id", new_repaired.faulty_serial_id.Text.ToString()));
+                SQLiteCommand command3 = new SQLiteCommand(UpdateFaulty, conn);
+                command3.Parameters.AddWithValue("@Faulty_tool_id", new_repaired.faulty_serial_id.Text.ToString());
 
                 await Task.Run(() => command3.ExecuteNonQuery());
 
 
                 Database_c.Close_DB_Connection();
                 MessageBox.Show(quantity + " Tool(s) with the Serial Number = '" + serial_id + "' added to Repaired tools ! Please reload the page", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if(MainWindow._Repaired_Tools_page != null)
+                {
+                    MainWindow._Repaired_Tools_page.NavigationService.Refresh();
+                }
+                else if (MainWindow._Faulty_Tools_page != null)
+                {
+                    MainWindow._Faulty_Tools_page.NavigationService.Refresh();
+                }
                 this.Close();
             }
         }

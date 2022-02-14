@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +31,10 @@ namespace Huber_Management.Pages
         {
 
             // INITIALIZE BY WHO COMBOBOX
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable by_who_table = new DataTable();
             string query = "SELECT DISTINCT(Faulty_by) as results FROM Faulty_Tools";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, conn);
             adapter.Fill(by_who_table);
             foreach (DataRow row in by_who_table.Rows)
             {
@@ -65,70 +65,94 @@ namespace Huber_Management.Pages
             total_price.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
             faulty_by.tableHeader_ToggleBtn.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFFF");
 
+            // PRIVILEGES
+            if (!MainWindow.Connected_user.canRepair)
+            {
+                Add_faulty_tool.IsEnabled = false;
+            }
             InitializeAllData();
         }
         public Controls.TableHeader_RadioBtn Selected_sort_by { get; set; } = null;
 
 
-        public async void InitializeAllData(string when = "", string who = "", string filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
+        public async void InitializeAllData(string when = "", string who = "", string text_search_filter = "", string sort_by = "", bool DESC = true, string _search_text = "")
         {
             if (LoadingIcon != null && DataScrollViewer != null)
             {
                 LoadingIcon.Visibility = Visibility.Visible;
+                noDataFound.Visibility = Visibility.Collapsed;
                 DataScrollViewer.Visibility = Visibility.Collapsed;
             }
 
-            SqlConnection conn = Database_c.Get_DB_Connection();
+            SQLiteConnection conn = Database_c.Get_DB_Connection();
             DataTable all_data = new DataTable();
 
-            string query = "Select * FROM Faulty_Tools LEFT JOIN Tools ON (Faulty_Tools.Tool_serial_id = Tools.Tool_serial_id) WHERE Faulty_quantity > 0 ";
+            string query = "SELECT * FROM Faulty_Tools LEFT JOIN Tools ON (Faulty_Tools.Tool_serial_id = Tools.Tool_serial_id) WHERE Faulty_quantity > 0 ";
+
 
             // FILTER CONVERTER
-            switch (filter)
+            switch (text_search_filter)
             {
                 case "Serial Number":
-                    filter = "Faulty_Tools.Tool_serial_id";
+                    text_search_filter = "Faulty_Tools.Tool_serial_id";
                     break;
                 case "Drawing":
-                    filter = "Tool_drawing";
+                    text_search_filter = "Tool_drawing";
                     break;
                 case "Supplier":
-                    filter = "Tool_supplier";
+                    text_search_filter = "Tool_supplier";
                     break;
                 case "Position":
-                    filter = "Tool_position";
+                    text_search_filter = "Tool_position";
+                    break;
+                case "Project":
+                    text_search_filter = "Tool_project";
+                    break;
+                case "Process":
+                    text_search_filter = "Tool_process";
+                    break;
+                case "Division":
+                    text_search_filter = "Tool_division";
+                    break;
+                case "Supplier Code":
+                    text_search_filter = "Tool_supplier_code";
                     break;
                 default:
-                    filter = "Faulty_Tools.Tool_serial_id";
+                    text_search_filter = "Faulty_Tools.Tool_serial_id";
                     break;
             }
-
             // SEARCH CONVERTER
             if (_search_text != "" && _search_text.Length > 0)
             {
-                query += " AND " + filter + " LIKE '%" + _search_text + "%' ";
+                query += " AND " + text_search_filter + " LIKE '%" + _search_text + "%' ";
             }
 
             // WHEN CONVERTER
+            string date = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+            string[] YearMonth = date.Split("-");
+            string thisMonth = YearMonth[0] + "-" + YearMonth[1];
             switch (when)
             {
                 case "This Month":
-                    when = " AND ( MONTH(added_date)=MONTH(GETDATE()) and YEAR(added_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', added_date) = '" + thisMonth + "' ";
                     break;
                 case "Last Month":
-                    when = " AND ( MONTH(added_date)<=( MONTH(GETDATE()) - 1 ) and YEAR(added_date)=YEAR(GETDATE()) ) ";
+                    int lastMonth = int.Parse(YearMonth[1]) - 1;
+                    string last_month = lastMonth < 10 ? "0" + lastMonth.ToString() : lastMonth.ToString();
+                    when = " AND strftime('%Y-%m', added_date) = '" + YearMonth[0] + "-" + last_month + "' ";
                     break;
                 case "Last Year":
-                    when = " AND ( YEAR(added_date)= (YEAR(GETDATE()) - 1) ) ";
+                    int lastYear = int.Parse(YearMonth[0]) - 1;
+                    when = " AND strftime('%Y', added_date) = '" + lastYear.ToString() + "' ";
                     break;
                 case "This Year":
-                    when = " AND ( YEAR(added_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y', added_date) = '" + YearMonth[0] + "' ";
                     break;
                 case "All":
                     when = "";
                     break;
                 default:
-                    when = " AND ( MONTH(added_date)=MONTH(GETDATE()) and YEAR(added_date)=YEAR(GETDATE()) ) ";
+                    when = " AND strftime('%Y-%m', added_date) = '" + thisMonth + "' ";
                     break;
             }
             query += when;
@@ -173,7 +197,7 @@ namespace Huber_Management.Pages
 
             try
             {
-                SqlDataAdapter adapter = await Task.Run(() => new SqlDataAdapter(query, conn));
+                SQLiteDataAdapter adapter = await Task.Run(() => new SQLiteDataAdapter(query, conn));
                 adapter.Fill(all_data);
             }
             catch (Exception ex)
@@ -184,13 +208,7 @@ namespace Huber_Management.Pages
 
 
             // EXECUTE QUERY
-            if (Faulty_rows_panel == null || all_data.Rows.Count <= 0)
-            {
-                Faulty_rows_panel = new StackPanel();
-                Faulty_rows_panel.Children.Add(this.noDataFound);
-                return;
-            }
-            else
+            if (all_data.Rows.Count > 0 && this.Faulty_rows_panel != null)
             {
                 try
                 {
@@ -231,15 +249,22 @@ namespace Huber_Management.Pages
                     MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-            }
-            Database_c.Close_DB_Connection();
 
-            if (LoadingIcon != null && DataScrollViewer != null)
+                if (LoadingIcon != null)
+                {
+                    LoadingIcon.Visibility = Visibility.Collapsed;
+                    DataScrollViewer.Visibility = Visibility.Visible;
+                    noDataFound.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
             {
+                noDataFound.Visibility = Visibility.Visible;
+                DataScrollViewer.Visibility = Visibility.Collapsed;
                 LoadingIcon.Visibility = Visibility.Collapsed;
-                DataScrollViewer.Visibility = Visibility.Visible;
             }
 
+            Database_c.Close_DB_Connection();
         }
 
         private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
@@ -250,7 +275,7 @@ namespace Huber_Management.Pages
             }
         }
 
-        public void InitializeAllData_Filters(object sender, EventArgs e)
+        public void InitializeAllData_Filters_Function()
         {
             if (search_filter != null && Nav_search_box != null && when_combobox != null && by_who_combobox != null)
             {
@@ -278,7 +303,10 @@ namespace Huber_Management.Pages
                     MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
+        }
+        public void InitializeAllData_Filters(object sender, EventArgs e)
+        {
+            InitializeAllData_Filters_Function();
         }
 
         private void sort_by_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

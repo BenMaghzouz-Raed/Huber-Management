@@ -55,7 +55,7 @@
                     />
             
             <!-- Password -->
-            <PasswordBox x:Name="password" Password="admin2" Height="64" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Width="300"
+            <PasswordBox x:Name="password" Height="64" Password="admin2" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Width="300"
                      materialDesign:HintAssist.Hint="Enter Password" BorderThickness="1" Margin="0 20 0 0" 
                      BorderBrush="{DynamicResource MaterialDesignDivider}" FontSize="20" 
                     />
